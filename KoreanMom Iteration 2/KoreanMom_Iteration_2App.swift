@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct KoreanMom_Iteration_2App: App {
@@ -13,5 +14,6 @@ struct KoreanMom_Iteration_2App: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [FocusSession.self])
     }
 }

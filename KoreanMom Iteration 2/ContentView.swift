@@ -8,14 +8,43 @@
 import SwiftUI
 
 struct ContentView: View {
+    enum Route: Hashable {
+        case home
+        case sessions
+        case settings
+    }
+
+    @State private var path = NavigationPath()
+    @State private var selection: Route = .home
+
+   
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack(path: $path) {
+            Group { // Switch the view based on the users selected page
+                switch selection {
+                case .home:
+                    HomeView()
+                case .sessions:
+                    SessionsView()
+                case .settings:
+                    SettingsView()
+                }
+            }
+            .navigationTitle("")
+            .toolbarBackgroundVisibility(.hidden) // Note does not show in Previews
+            .toolbar {
+                ToolbarItemGroup {
+                    Picker("", selection: $selection) {
+                        Label("Home", systemImage: "house").tag(Route.home)
+                        Label("Sessions", systemImage: "list.bullet").tag(Route.sessions)
+                        Label("Settings", systemImage: "gear").tag(Route.settings)
+                    }
+                    .pickerStyle(.segmented)
+                    .controlSize(.extraLarge)
+                }
+            }
+           
         }
-        .padding()
     }
 }
 

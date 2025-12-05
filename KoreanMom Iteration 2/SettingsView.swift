@@ -2,16 +2,24 @@ import SwiftUI
 
 struct SettingsView: View {
     var body: some View {
-        Form {
-            Section(header: Text("General")) {
-                Toggle("Enable Notifications", isOn: .constant(true))
-                Toggle("Sound Effects", isOn: .constant(false))
-            }
+        VStack(alignment: .leading) {
+            Text("Head Tracking").bold()
+            Text("Use secure on device head tracking to make sure your focused.")
+            
+            FaceRotationChart()
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .foregroundStyle(Color(.gray))
+                        .opacity(0.1)
+                )
+                
+        
         }
-        .navigationTitle("Settings")
+            .navigationTitle("Settings")
     }
 }
 
 #Preview {
-    NavigationStack { SettingsView() }
+    NavigationStack { SettingsView().padding() }
 }

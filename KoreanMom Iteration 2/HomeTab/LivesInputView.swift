@@ -8,11 +8,51 @@
 import SwiftUI
 
 struct LivesInputView: View {
+    @Binding var lives: Int
+    @State private var livesAsString: String
+    @FocusState private var isFocused: Bool
+
+    init(lives: Binding<Int>) {
+        self._lives = lives
+        self._livesAsString = State(initialValue: String(lives.wrappedValue))
+    }
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: 0) {
+            VStack(spacing: 6) {
+                Text("Enter Life Count")
+                    .bold()
+                    .font(.title3)
+
+                Text("Represents the number of lives you have while focusing. \nIf you break focus, you lose a life!")
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+
+                Label("\(lives) Lives Recommended", systemImage: "")
+                    .foregroundStyle(.secondary)
+            }
+
+            DigitInputView(input: $livesAsString)
+                .focused($isFocused)
+                .padding()
+                .background(.white)
+                .cornerRadius(20)
+                .padding(.top, 20)
+                .onAppear { isFocused = true }
+                .onChange(of: livesAsString) { newValue in
+                    if let value = Int(livesAsString) {
+                        lives = value
+                    }
+                }
+                .onChange(of: lives) { newValue in
+                    livesAsString = String(lives)
+                }
+        }
     }
 }
 
 #Preview {
-    LivesInputView()
+    LivesInputView(lives: .constant(0))
+        .padding()
+        .background(.gray.opacity(0.1))
 }
