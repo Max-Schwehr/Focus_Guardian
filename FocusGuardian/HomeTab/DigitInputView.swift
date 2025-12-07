@@ -10,13 +10,13 @@ struct DigitInputView: View {
     @Binding var input: String
 
     var body: some View {
-//        TextField("", text: $input)
-//            .disableAutocorrection(true)
-//            .fontDesign(.monospaced)
-//            .bold()
-//            .font(.largeTitle)
-//            .multilineTextAlignment(.center)
-//            .frame(width: 45)
+        TextField("", text: $input)
+            .disableAutocorrection(true)
+            .fontDesign(.monospaced)
+            .bold()
+            .font(.largeTitle)
+            .multilineTextAlignment(.center)
+            .frame(width: 45)
     }
 }
 
