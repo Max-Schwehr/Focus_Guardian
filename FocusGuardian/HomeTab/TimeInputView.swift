@@ -1,6 +1,5 @@
 //
 //  TimeInputView.swift
-//  KoreanMom Iteration 2
 //
 //  Created by Maximiliaen Schwehr on 11/7/25.
 //

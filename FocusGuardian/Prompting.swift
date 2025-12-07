@@ -1,10 +1,3 @@
-//
-//  Prompting.swift
-//  KoreanMom Iteration 2
-//
-//  Created by Maximiliaen Schwehr on 11/8/25.
-//
-
 import FoundationModels
 import Playgrounds
 

@@ -1,6 +1,5 @@
 //
 //  SessionClass.swift
-//  KoreanMom Iteration 2
 //
 //  Created by Maximiliaen Schwehr on 12/1/25.
 //

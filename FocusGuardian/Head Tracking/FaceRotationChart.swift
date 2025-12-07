@@ -1,6 +1,5 @@
 //
 //  FaceRotationChart.swift
-//  KoreanMom Iteration 2
 //
 //  Created by Maximiliaen Schwehr on 10/17/25.
 //
