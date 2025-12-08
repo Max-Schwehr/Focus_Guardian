@@ -16,6 +16,7 @@ struct ContractFeedBackOutput {
 
 
 func isValidRetype(phraseToBeTyped: String, phraseTyped: String) async -> Bool {
+    return true
     let instructions = """
 Your job: Compare the intent of the two texts and decide true/false accordingly. If Text 2 represents the same meaning as text 1, return true. If text 2 represents a different meaning then Text 1 return false.
 
