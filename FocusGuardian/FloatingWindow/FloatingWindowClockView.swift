@@ -2,12 +2,12 @@ import SwiftUI
 
 #if os(macOS)
 struct FloatingWindowClockView: View {
-    @Binding var minutesRemaining: Int
+    @Binding var secondsRemaining: Int
     let size: CGSize
 
     var body: some View {
         HStack(spacing: 10) {
-            Text(minutesToHoursAndMinutes(seconds: minutesRemaining, showSeconds: true))
+            Text(minutesToHoursAndMinutes(seconds: secondsRemaining, showSeconds: false))
         }
         .frame(width: size.width, height: size.height)
         .bold()
@@ -16,6 +16,6 @@ struct FloatingWindowClockView: View {
 }
 
 #Preview {
-    FloatingWindowClockView(minutesRemaining: .constant(120), size: CGSize(width: 150, height: 40))
+    FloatingWindowClockView(secondsRemaining: .constant(120), size: CGSize(width: 150, height: 40))
 }
 #endif

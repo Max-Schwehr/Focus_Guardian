@@ -8,13 +8,16 @@
 import Foundation
 import Swift
 
-
-/// Converts a number of minutes, and outputs that value as a string that has an hour value, and a minute value.
-/// - Parameter minutes: Number of total minutes
-/// - Returns: A string that has hour(s) and minute(s)
+/// Converts a number of seconds into a string showing hours, minutes, and optional seconds.
+/// - Parameters:
+///   - seconds: Total number of seconds
+///   - showSeconds: Whether to include seconds in the output string
+/// - Returns: A formatted string "Xhr, Ymin, Zsec"
 func minutesToHoursAndMinutes(seconds: Int, showSeconds: Bool) -> String {
-    let hours : Int = seconds / 3600
-    let minutes : Int = seconds % 60
-    let seconds : Int = seconds % 3600
-    return "\(hours)hr, \(minutes)min\(showSeconds ? ", \(seconds)sec" : "")"
+    let hours = seconds / 3600
+    let minutes = (seconds % 3600) / 60
+    let remainingSeconds = seconds % 60
+    
+    return "\(hours)hr, \(minutes)min\(showSeconds ? ", \(remainingSeconds)sec" : "")"
 }
+

@@ -4,7 +4,8 @@ import SwiftUI
 struct FloatingWindowMenuView: View {
     let size: CGSize
     var cornerRadius: CGFloat = 25
-    
+    @Binding var secondsRemaining: Int
+    var totalSeconds : Int
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 10) {
@@ -12,8 +13,8 @@ struct FloatingWindowMenuView: View {
                 Text("Focus Timer")
                     .bold()
                 VStack(alignment: .leading, spacing: 7) {
-                    Text("Time Remaining: 1hr, 37m, 21s")
-                    Text("Time Elapsed: 23m, 39s")
+                    Text("Remaining: \(minutesToHoursAndMinutes(seconds: secondsRemaining, showSeconds: true))")
+                    Text("Elapsed: \(minutesToHoursAndMinutes(seconds: totalSeconds - secondsRemaining, showSeconds: true))")
                     Text("Lives Used: 2 out of 4")
                 }
                 Spacer()
@@ -45,7 +46,7 @@ struct BlurModifier: ViewModifier {
 }
 
 #Preview {
-    FloatingWindowMenuView(size: CGSize(width: 250, height: 120))
+    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: .constant(10), totalSeconds: 20)
         .offset(x: 10, y: -50)
 }
 #endif
