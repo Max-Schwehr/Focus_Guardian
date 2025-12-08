@@ -23,7 +23,10 @@ struct FloatingWindowView: View {
     @Query var sessions: [FocusSession]
     @Environment(\.modelContext) var modelContext
     @State private var activeSession : FocusSession? = nil
-    
+
+    // MARK: Camera Logic
+    @StateObject private var headTracker = CameraManager()
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // MARK: - MacOS window's rectangle, dictating the MacOS window's size
@@ -33,7 +36,10 @@ struct FloatingWindowView: View {
                 .onChange(of: isHoveringFloatingClock) { oldValue, newValue in closeOpenMenu() }
                 .onChange(of: isHoveringFloatingMenu) { oldValue, newValue in closeOpenMenu() }
                 .onChange(of: sessions) { refreshActiveSession() }
-                .onAppear { refreshActiveSession() }
+                .onAppear {
+                    refreshActiveSession() // Retrieve the active session from Swift Data
+                    headTracker.requestAccessAndConfigure() // Start up camera
+                }
                 .task { // Reduces seconds remaining by 1 every second
                     while secondsRemaining > 0 {
                         try? await Task.sleep(for: .seconds(1))
@@ -50,14 +56,17 @@ struct FloatingWindowView: View {
                         case .ended: isHoveringFloatingClock = false
                         }
                     }
+                    .onChange(of: headTracker.hasFace) { oldValue, newValue in
+                        print("Camera has face: \(newValue)")
+                    }
+                    
                 
                 Spacer()
             }
             VStack {
                 if showingMenu {
                     // MARK: - Floating Detail Menu
-                    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: $secondsRemaining, totalSeconds: activeSession?.targetLength ?? 0)
-                        .onAppear {print("Active Session Target Length: \(activeSession?.targetLength)")}
+                    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: $secondsRemaining, activeSession: $activeSession)
                         .onContinuousHover { phase in // Update Hover State
                             switch phase {
                             case .active(_): isHoveringFloatingMenu = true
@@ -113,6 +122,7 @@ struct FloatingWindowView: View {
             activeSession = try getMostRecentFocusSession(list: sessions)
             print("Refreshed most recent focus session: Date = \(String(describing: activeSession?.date)) Length = \(String(describing: activeSession?.targetLength))")
             secondsRemaining = (activeSession?.targetLength ?? 0) * 60 // Retrieve the number of minutes the user set the session to be, and convert that to seconds
+            
         } catch {
             print("No active session available or error: \(error)")
         }

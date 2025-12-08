@@ -38,12 +38,12 @@ struct LivesInputView: View {
                 .cornerRadius(20)
                 .padding(.top, 20)
                 .onAppear { isFocused = true }
-                .onChange(of: livesAsString) { newValue in
+                .onChange(of: livesAsString) { oldValue, newValue in
                     if let value = Int(livesAsString) {
                         lives = value
                     }
                 }
-                .onChange(of: lives) { newValue in
+                .onChange(of: lives) { oldValue, newValue in
                     livesAsString = String(lives)
                 }
         }

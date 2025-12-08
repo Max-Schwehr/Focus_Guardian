@@ -5,7 +5,7 @@ struct FloatingWindowMenuView: View {
     let size: CGSize
     var cornerRadius: CGFloat = 25
     @Binding var secondsRemaining: Int
-    var totalSeconds : Int
+    @Binding var activeSession : FocusSession?
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 10) {
@@ -14,7 +14,7 @@ struct FloatingWindowMenuView: View {
                     .bold()
                 VStack(alignment: .leading, spacing: 7) {
                     Text("Remaining: \(minutesToHoursAndMinutes(seconds: secondsRemaining, showSeconds: true))")
-                    Text("Elapsed: \(minutesToHoursAndMinutes(seconds: totalSeconds - secondsRemaining, showSeconds: true))")
+                    Text("Elapsed: \(minutesToHoursAndMinutes(seconds: (activeSession?.targetLength ?? 0) * 60 - secondsRemaining, showSeconds: true))")
                     Text("Lives Used: 2 out of 4")
                 }
                 Spacer()
@@ -46,7 +46,7 @@ struct BlurModifier: ViewModifier {
 }
 
 #Preview {
-    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: .constant(10), totalSeconds: 20)
+    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: .constant(10), activeSession: .constant(FocusSession(targetLength: 120, completed: false, date: Date())))
         .offset(x: 10, y: -50)
 }
 #endif

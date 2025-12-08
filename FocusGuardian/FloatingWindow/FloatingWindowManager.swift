@@ -43,12 +43,9 @@ final class FloatingWindowManager: NSObject {
         guard let panel else { return }
         // Current frame and screen
         let currentFrame = panel.frame
-        let panelSize = currentFrame.size
-        let screen = panel.screen ?? NSScreen.main ?? NSScreen.screens.first
-        let screenFrame = screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
 
         // Compute unclamped new origin (AppKit origin is bottom-left)
-        var newOrigin = NSPoint(x: currentFrame.origin.x + xOffset,
+        let newOrigin = NSPoint(x: currentFrame.origin.x + xOffset,
                                 y: currentFrame.origin.y + yOffset)
 
         panel.setFrameOrigin(newOrigin)
