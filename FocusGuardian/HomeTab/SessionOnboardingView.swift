@@ -54,7 +54,7 @@ struct SessionOnboardingView: View {
                     print("Failed to save context before showing floating window: \(error)")
                 }
                 #if os(macOS)
-                if !didShowFloatingTimer && isContractValid == true {
+                if !didShowFloatingTimer{ // Normally and & is contract valid
                     didShowFloatingTimer = true
                     FloatingWindowManager.shared.show(using: modelContainer)
                     // Optionally close the onboarding window
@@ -83,7 +83,14 @@ struct SessionOnboardingView: View {
                 
                 Spacer()
                 
-                Button(action: goNext) {
+                Button(action: {
+                    
+                    let session = FocusSession(targetLength: 120, completed: false, date: Date())
+                    modelContext.insert(session)
+                    do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
+                    //normally next step
+                    
+                }) {
                     Label(step == .contractInput ? "Start Focus Timer" : "Next", systemImage: step == .livesInput ? "checkmark" : "chevron.down")
                         .labelStyle(.titleAndIcon)
                         .font(.headline)

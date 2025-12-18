@@ -12,6 +12,8 @@ struct FloatingWindowClockView: View {
         .frame(width: size.width, height: size.height)
         .bold()
         .glassEffect()
+        .animation(.spring(), value: size)
+
     }
 }
 

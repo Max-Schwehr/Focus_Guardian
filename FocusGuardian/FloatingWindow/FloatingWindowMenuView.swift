@@ -24,7 +24,6 @@ struct FloatingWindowMenuView: View {
         .padding(20)
         .frame(width: size.width, height: size.height)
         .glassEffect(.clear.interactive(), in: .rect(cornerRadius: cornerRadius))
-        .offset(x: -10, y: 50)
         .transition(
             .scale(scale: 0.0, anchor: .topTrailing)
             .combined(with: .opacity)

@@ -13,8 +13,14 @@ struct FloatingWindowView: View {
     
     // Behind each floating element, is a clear MacOS window, the quickly expands or retracts to be able to fit any animations, or content that appears floating to the user.
     @State private var macOSWindowSize: CGSize = CGSize(width: 100, height: 40)
-    // Size of the timer liquid glass
     @State private var timerSize: CGSize = CGSize(width: 100, height: 40)
+    @State private var menuSize: CGSize = CGSize(width: 0, height: 0)
+    let padding : CGFloat = 10
+    let expandedMenuSize = CGSize(width: 260, height: 120)
+    let outsidePadding : CGFloat = 10
+    let debugMode = false
+    
+    // Size of the timer liquid glass
     @State private var showingMenu = false // isShowing Detail Menu
     @State private var isHoveringFloatingClock = false // If the user is hovering on the clock
     @State private var isHoveringFloatingMenu = false // If the user is hovering on the detail menu
@@ -23,18 +29,18 @@ struct FloatingWindowView: View {
     @Query var sessions: [FocusSession]
     @Environment(\.modelContext) var modelContext
     @State private var activeSession : FocusSession? = nil
-
+    
     // MARK: Camera Logic
     @StateObject private var headTracker = CameraManager()
-
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // MARK: - MacOS window's rectangle, dictating the MacOS window's size
             Rectangle()
                 .frame(width: macOSWindowSize.width, height: macOSWindowSize.height)
                 .foregroundStyle(Color.clear)
-                .onChange(of: isHoveringFloatingClock) { oldValue, newValue in closeOpenMenu() }
-                .onChange(of: isHoveringFloatingMenu) { oldValue, newValue in closeOpenMenu() }
+//                            .onChange(of: isHoveringFloatingClock) { oldValue, newValue in closeOpenMenu() }
+            //                .onChange(of: isHoveringFloatingMenu) { oldValue, newValue in closeOpenMenu() }
                 .onChange(of: sessions) { refreshActiveSession() }
                 .onAppear {
                     refreshActiveSession() // Retrieve the active session from Swift Data
@@ -46,38 +52,94 @@ struct FloatingWindowView: View {
                         secondsRemaining -= 1
                     }
                 }
+                .border(debugMode ? .black : .clear)
             
             VStack(alignment: .trailing) {
                 // MARK: - Floating Liquid Glass Timer
                 FloatingWindowClockView(secondsRemaining: $secondsRemaining, size: timerSize)
-                    .onContinuousHover { phase in // Update Hover State
+                    .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                         switch phase {
-                        case .active(_): isHoveringFloatingClock = true
-                        case .ended: isHoveringFloatingClock = false
+                        case .active(_):
+                            RequestSizeChange(itemToChange: .Menu, newSize: expandedMenuSize)
+                        case .ended:
+                            RequestSizeChange(itemToChange: .Menu, newSize: CGSize(width: 0, height: 0))
                         }
                     }
-                    .onChange(of: headTracker.hasFace) { oldValue, newValue in
-                        print("Camera has face: \(newValue)")
+                    .onChange(of: headTracker.hasFace) { _, hasFace in // SHOULD SHOW "NOT SHOWING FACE" SIGN
+                        print("Camera has face: \(hasFace)")
+                        if hasFace {
+                            RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 100, height: 40))
+                        } else {
+                            RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 150, height: 80))
+                        }
+                    }                        .border(debugMode ? Color.red : Color.clear)
+
+
+                ZStack(alignment: .topTrailing) {
+                    if menuSize.width + menuSize.height > 0 {
+                        // MARK: - Floating Detail Menu
+                        FloatingWindowMenuView(size: menuSize, secondsRemaining: $secondsRemaining, activeSession: $activeSession)
+                            .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
+                                switch phase {
+                                case .active(_):
+                                    RequestSizeChange(itemToChange: .Menu, newSize: expandedMenuSize)
+                                case .ended:
+                                    RequestSizeChange(itemToChange: .Menu, newSize: CGSize(width: 0, height: 0))
+                                }
+                            }
+                            .border(debugMode ? Color.red : Color.clear)
+//                            .animation(.spring(), value: menuSize.width + menuSize.height > 0)
                     }
-                    
-                
+                }
+                    .animation(.spring(), value: menuSize.width + menuSize.height > 0)
                 Spacer()
             }
-            VStack {
-                if showingMenu {
-                    // MARK: - Floating Detail Menu
-                    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: $secondsRemaining, activeSession: $activeSession)
-                        .onContinuousHover { phase in // Update Hover State
-                            switch phase {
-                            case .active(_): isHoveringFloatingMenu = true
-                            case .ended: isHoveringFloatingMenu = false
-                            }
-                        }
-                }
-            }
-            .animation(.spring(), value: showingMenu)
+            
         }
         
+    }
+    
+    // MARK: Request to Change Size Function
+    /// This function allows the input of what is changing, and what its new CGSize for that component should be.
+    enum ItemOnScreen {
+        case Timer
+        case Menu
+    }
+    private func RequestSizeChange(itemToChange: ItemOnScreen, newSize: CGSize) {
+        // Get old size
+        var oldSize = CGSize()
+        switch itemToChange {
+        case .Menu:
+            oldSize = menuSize
+        case .Timer:
+            oldSize = timerSize
+        }
+        
+        // Increase element size
+//        withAnimation {
+            switch itemToChange {
+            case .Menu:
+                menuSize = newSize
+            case .Timer:
+                timerSize = newSize
+            }
+//        }
+        
+        if (newSize.width < oldSize.width || newSize.height < oldSize.height) { // If the object is decreasing its size, we need to wait till the item's animation play's before resizing the MacOS Window
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                ComputeNewMacOSWindowSize()
+            }
+        } else {
+            ComputeNewMacOSWindowSize()
+        }
+        
+        func ComputeNewMacOSWindowSize () {
+            // Compute new MacOS window Size
+            var totalSize : CGSize = CGSize(width: 0, height: 0)
+            totalSize.width = max(timerSize.width, menuSize.width) + padding + outsidePadding*2
+            totalSize.height = timerSize.height + menuSize.height + padding + outsidePadding*2
+            resizeMacOSWindow(newSize: totalSize)
+        }
     }
     
     // MARK: - Floating Window Functions
@@ -85,38 +147,17 @@ struct FloatingWindowView: View {
         return CGSize(width: input.width + xOffset, height: input.height + yOffset)
     }
     
-    private func resizeWindow(newSize: CGSize) {
+    private func resizeMacOSWindow(newSize: CGSize) {
         print("macOSWindowSize.height: \(macOSWindowSize.height)")
         print("newSize.height: \(newSize.height)")
         
-        // We resize the MacOS Window with some padding, that way when the liquid glass preforms a spring animation, it does not clip the macOS Window
-        let newSizeWithPadding = offsetCGSize(input: newSize, xOffset: 0, yOffset: 0)
-        
         // Move the window position to keep the liquid glass part at the same position
-        FloatingWindowManager.shared.moveWindow(xOffset: macOSWindowSize.width - newSizeWithPadding.width, yOffset: 0)
+        FloatingWindowManager.shared.moveWindow(xOffset: macOSWindowSize.width - newSize.width, yOffset: 0)
         
         // Resize the MacOS window
-        macOSWindowSize = newSizeWithPadding
+        macOSWindowSize = newSize
     }
-    
-    private func closeOpenMenu() {
-        if isHoveringFloatingClock || isHoveringFloatingMenu {
-            resizeWindow(newSize: CGSize(width: 275 + 10, height: 120 + 40 + 10))
-            showingMenu = true
-        } else {
-            print("SHOULD CLOSE")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                showingMenu = false
-                if (!isHoveringFloatingMenu && !isHoveringFloatingClock) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        resizeWindow(newSize: CGSize(width: 100, height: 40))
-                    }
-                }
-            }
-        }
-        
-    }
-    
+
     private func refreshActiveSession() {
         do {
             activeSession = try getMostRecentFocusSession(list: sessions)
