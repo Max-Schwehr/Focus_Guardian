@@ -25,6 +25,8 @@ enum YawDirection {
 /// .onDisappear { camera.stop() }
 /// ```
 final class CameraManager: NSObject, ObservableObject {
+    private var frameCount = 0
+
     @Published var yawDirection: YawDirection? = nil
     /// Pitch angle in degrees (looking up is positive). `nil` if unavailable.
 
@@ -172,6 +174,11 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             return
         }
 
+        frameCount += 1
+        if frameCount % 45 != 0 {
+            return
+        }
+
         // Detect face orientation in radians using Vision.
         let facing = faceOrientation(in: pixelBuffer)
 
@@ -198,3 +205,4 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         }
     }
 }
+

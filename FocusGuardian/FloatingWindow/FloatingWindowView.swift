@@ -70,7 +70,7 @@ struct FloatingWindowView: View {
                         if hasFace {
                             RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 100, height: 40))
                         } else {
-                            RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 150, height: 80))
+                            RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 200, height: 80))
                         }
                     }                        .border(debugMode ? Color.red : Color.clear)
 
