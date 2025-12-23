@@ -5,32 +5,41 @@ struct SessionsView: View {
     @Query var sessions: [FocusSession]
     @Environment(\.modelContext) var modelContext
 
+    // Group sessions by calendar day, newest day first, sessions within each day sorted by time descending
+    private var groupedSessions: [(date: Date, items: [FocusSession])] {
+        let calendar = Calendar.current
+        let groups = Dictionary(grouping: sessions) { session in
+            calendar.startOfDay(for: session.date)
+        }
+        // sort days descending, and items within each day descending by date
+        return groups
+            .map { (key, value) in
+                (date: key, items: value.sorted { $0.date > $1.date })
+            }
+            .sorted { $0.date > $1.date }
+    }
+
+    private var dayHeaderFormatter: DateFormatter {
+        let df = DateFormatter()
+        df.dateStyle = .full
+        df.timeStyle = .none
+        return df
+    }
+
     var body: some View {
         VStack(spacing: 16) {
-            Image(systemName: "list.bullet")
-                .font(.system(size: 48, weight: .regular))
-                .symbolRenderingMode(.hierarchical)
-            Text("Sessions")
-                .font(.largeTitle)
-                .bold()
-            Text("Review and manage your focus sessions")
-                .foregroundStyle(.secondary)
-            
             List {
-                ForEach(sessions) { session in
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text("Target: \(session.targetLength) min")
-                                .font(.headline)
-                            Spacer()
-                            Label(session.completed ? "Completed" : "In Progress",
-                                  systemImage: session.completed ? "checkmark.circle.fill" : "clock")
-                                .foregroundStyle(session.completed ? .green : .orange)
-                                .font(.subheadline)
+                ForEach(groupedSessions, id: \.date) { group in
+                    Section(header: Text(dayHeaderFormatter.string(from: group.date)).font(.headline)) {
+                        ForEach(group.items) { session in
+                            SessionCell(session: session)
+                                .listRowSeparator(.hidden)
+                        }
+                        .onDelete { offsets in
+                            deleteSessions(in: group.items, at: offsets)
                         }
                     }
                 }
-                .onDelete(perform: deleteSessions)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
@@ -40,11 +49,18 @@ struct SessionsView: View {
 }
 
 extension SessionsView {
-    private func deleteSessions(at offsets: IndexSet) {
-        for index in offsets {
-            let session = sessions[index]
+    // Delete using offsets within a specific grouped subset, mapping back to the original sessions array
+    private func deleteSessions(in subset: [FocusSession], at offsets: IndexSet) {
+        // Build a set of IDs to delete based on the subset and offsets
+        let idsToDelete: Set<PersistentIdentifier> = Set(offsets.compactMap { idx in
+            subset[idx].persistentModelID
+        })
+
+        // Find matching sessions in the full collection and delete them
+        for session in sessions where idsToDelete.contains(session.persistentModelID) {
             modelContext.delete(session)
         }
+
         do {
             try modelContext.save()
         } catch {

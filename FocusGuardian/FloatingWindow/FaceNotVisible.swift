@@ -36,7 +36,7 @@ struct FaceNotVisible: View {
                                         print("Timer Ended!")
                                         timerCancellable?.cancel()
                                         Task {
-                                            requestedLivesSize = CGSize(width: 250, height: 210)
+                                            requestedLivesSize = CGSize(width: 250, height: getFloatingHeartsWindowHeight(numberOfHearts: 3)) // MARK: Todo
                                             try await Task.sleep(for: .seconds(1))
                                             livesLost += 1
                                             try await Task.sleep(for: .seconds(1))

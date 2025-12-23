@@ -21,3 +21,5 @@ class FocusSession {
         self.totalHeartsCount = totalLivesCount
     }
 }
+
+let mocSession : FocusSession = FocusSession(targetLength: 130, completed: true, date: Date(), totalLivesCount: 5)

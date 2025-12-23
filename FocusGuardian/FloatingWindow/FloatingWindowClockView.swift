@@ -12,7 +12,7 @@ struct FloatingWindowClockView: View {
             if size.height > normalTimerSize.height {
                 FaceNotVisible(livesLost: $livesLost, requestedLivesSize: $requestedLivesSize)
             } else {
-                Text(minutesToHoursAndMinutes(seconds: secondsRemaining, showSeconds: false))
+                Text(secondsToPresentableTime(seconds: secondsRemaining, showSeconds: false))
                     .bold()
             }
         }

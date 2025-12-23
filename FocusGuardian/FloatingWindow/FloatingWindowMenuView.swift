@@ -13,8 +13,8 @@ struct FloatingWindowMenuView: View {
                 Text("Focus Timer")
                     .bold()
                 VStack(alignment: .leading, spacing: 7) {
-                    Text("Remaining: \(minutesToHoursAndMinutes(seconds: secondsRemaining, showSeconds: true))")
-                    Text("Elapsed: \(minutesToHoursAndMinutes(seconds: (activeSession?.targetLength ?? 0) * 60 - secondsRemaining, showSeconds: true))")
+                    Text("Remaining: \(secondsToPresentableTime(seconds: secondsRemaining, showSeconds: true))")
+                    Text("Elapsed: \(secondsToPresentableTime(seconds: (activeSession?.targetLength ?? 0) * 60 - secondsRemaining, showSeconds: true))")
                     Text("Lives Used: 2 out of 4")
                 }
                 Spacer()

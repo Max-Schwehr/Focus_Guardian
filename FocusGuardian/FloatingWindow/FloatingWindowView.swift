@@ -22,7 +22,7 @@ struct FloatingWindowView: View {
     let padding : CGFloat = 10
     let expandedMenuSize = CGSize(width: 260, height: 120)
     let outsidePadding : CGFloat = 10
-    let debugMode = true
+    let debugMode = false
     
     // Size of the timer liquid glass
     @State private var showingMenu = false // isShowing Detail Menu
@@ -58,6 +58,7 @@ struct FloatingWindowView: View {
                     }
                 }
                 .onChange(of: requestedLivesSize, { oldValue, newValue in
+                    print("Requested Size Change Height: \(newValue.height)")
                     RequestSizeChange(itemToChange: .Lives, newSize: newValue)
                 })
                 .border(debugMode ? .black : .clear)

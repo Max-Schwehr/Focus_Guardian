@@ -17,20 +17,30 @@ struct FloatingWindowHearts: View {
     @Binding var size : CGSize
     @Binding var livesLost: Int
     
+    @State var test = false
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("Session Lives")
                 .bold()
             
             Text("Don't run out of lives!")
-            
-            LazyVGrid(columns: columns, spacing: 7) {
-                ForEach(0..<totalHearts, id: \.self) { index in
-                    let lost = min(livesLost, totalHearts)
-                    Image(systemName: index < lost ? "heart.slash.fill" : "heart.fill")
+                .onAppear {
+//                    print("Total Hearts = \(totalHearts)")
+                    print("Width: \(size.width), Height: \(size.height)")
+                    test = true
                 }
-            }
-            .padding(.top, 9)
+//            if test {
+                LazyVGrid(columns: columns, spacing: 7) {
+                    ForEach(0..<totalHearts, id: \.self) { index in
+                    let lost = min(livesLost, totalHearts)
+                        Image(systemName: index < lost ? "heart.slash.fill" : "heart.fill")
+                    }
+                }
+                .frame(minWidth: 1, minHeight: 1)
+                .padding(.top, 9)
+//                .frame(width: 300, height: 300)
+//            }
             
         }
         .padding()
@@ -53,6 +63,7 @@ struct FloatingWindowHearts: View {
 func getFloatingHeartsWindowHeight(numberOfHearts: Int) -> Int {
     let numberOfRows : Int = Int(ceil(Double(numberOfHearts) / 8))
     return 100 + numberOfRows * 10
+//    return 300
 }
 
 
