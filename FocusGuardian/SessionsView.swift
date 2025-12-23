@@ -36,36 +36,10 @@ struct SessionsView: View {
         }
         .padding()
         .navigationTitle("Sessions")
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Add Sample Data") {
-                    addSampleData()
-                }
-            }
-        }
     }
 }
 
 extension SessionsView {
-    private func addSampleData() {
-        let now = Date()
-        let sampleSessions: [FocusSession] = [
-            FocusSession(targetLength: 25, completed: true, date: now.addingTimeInterval(-3600*3)),
-            FocusSession(targetLength: 45, completed: false, date: now.addingTimeInterval(-3600*6)),
-            FocusSession(targetLength: 20, completed: true, date: now.addingTimeInterval(-3600*1))
-        ]
-        
-        for session in sampleSessions {
-            modelContext.insert(session)
-        }
-        
-        do {
-            try modelContext.save()
-        } catch {
-            print("Failed to save sample sessions: \(error)")
-        }
-    }
-    
     private func deleteSessions(at offsets: IndexSet) {
         for index in offsets {
             let session = sessions[index]

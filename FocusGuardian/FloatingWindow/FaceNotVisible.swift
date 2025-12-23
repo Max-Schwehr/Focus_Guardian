@@ -12,6 +12,8 @@ struct FaceNotVisible: View {
     @State private var pulse = false
     @State private var timerCancellable: AnyCancellable?
     @State private var percent = 0.1
+    @Binding var livesLost : Int
+    @Binding var requestedLivesSize : CGSize
 
     var body: some View {
         ZStack {
@@ -33,6 +35,13 @@ struct FaceNotVisible: View {
                                     } else {
                                         print("Timer Ended!")
                                         timerCancellable?.cancel()
+                                        Task {
+                                            requestedLivesSize = CGSize(width: 250, height: 210)
+                                            try await Task.sleep(for: .seconds(1))
+                                            livesLost += 1
+                                            try await Task.sleep(for: .seconds(1))
+                                            requestedLivesSize = CGSize(width: 0, height: 0)
+                                        }
                                     }
                                 }
                         }
@@ -60,6 +69,6 @@ struct FaceNotVisible: View {
 }
 
 #Preview {
-    FloatingWindowClockView(secondsRemaining: .constant(120), size: CGSize(width: 200, height: 80))
+    FloatingWindowClockView(secondsRemaining: .constant(120), size: CGSize(width: 200, height: 80), livesLost: .constant(3), requestedLivesSize: .constant(CGSize(width: 250, height: 110)))
         .padding()
 }

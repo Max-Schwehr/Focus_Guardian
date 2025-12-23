@@ -85,7 +85,7 @@ struct SessionOnboardingView: View {
                 
                 Button(action: {
                     
-                    let session = FocusSession(targetLength: 120, completed: false, date: Date())
+                    let session = FocusSession(targetLength: 120, completed: false, date: Date(), totalLivesCount: 5)
                     modelContext.insert(session)
                     do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
                     //normally next step
@@ -122,7 +122,7 @@ struct SessionOnboardingView: View {
         if step == .contractInput {
             // Handle completion if needed
             print("Pre Insert Session Length: \(sessions.count)")
-            let session = FocusSession(targetLength: hours * 60 + minutes, completed: false, date: Date())
+            let session = FocusSession(targetLength: hours * 60 + minutes, completed: false, date: Date(), totalLivesCount: lives)
             modelContext.insert(session)
             do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
             print("INSERTED!!!")

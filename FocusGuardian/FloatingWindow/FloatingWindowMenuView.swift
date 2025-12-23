@@ -45,7 +45,7 @@ struct BlurModifier: ViewModifier {
 }
 
 #Preview {
-    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: .constant(10), activeSession: .constant(FocusSession(targetLength: 120, completed: false, date: Date())))
+    FloatingWindowMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: .constant(10), activeSession: .constant(FocusSession(targetLength: 120, completed: false, date: Date(), totalLivesCount: 5)))
         .offset(x: 10, y: -50)
 }
 #endif

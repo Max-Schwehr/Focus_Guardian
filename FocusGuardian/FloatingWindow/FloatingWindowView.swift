@@ -15,15 +15,22 @@ struct FloatingWindowView: View {
     @State private var macOSWindowSize: CGSize = CGSize(width: 100, height: 40)
     @State private var timerSize: CGSize = CGSize(width: 100, height: 40)
     @State private var menuSize: CGSize = CGSize(width: 0, height: 0)
+    @State private var livesSize: CGSize = CGSize(width: 0, height: 0)
+    
+    @State private var requestedLivesSize: CGSize = CGSize(width: 0, height: 0) // Remember, all variables above must use the requestSizeChange function in-order to maintain proper order, relation, and animations within this file. Thus, child views can adjust this variable, and when this changes we run the function.
+    
     let padding : CGFloat = 10
     let expandedMenuSize = CGSize(width: 260, height: 120)
     let outsidePadding : CGFloat = 10
-    let debugMode = false
+    let debugMode = true
     
     // Size of the timer liquid glass
     @State private var showingMenu = false // isShowing Detail Menu
     @State private var isHoveringFloatingClock = false // If the user is hovering on the clock
     @State private var isHoveringFloatingMenu = false // If the user is hovering on the detail menu
+    
+    // Lives information
+    @State private var livesLost = 0
     
     // MARK: Swift Data & Major Data Management
     @Query var sessions: [FocusSession]
@@ -39,8 +46,6 @@ struct FloatingWindowView: View {
             Rectangle()
                 .frame(width: macOSWindowSize.width, height: macOSWindowSize.height)
                 .foregroundStyle(Color.clear)
-//                            .onChange(of: isHoveringFloatingClock) { oldValue, newValue in closeOpenMenu() }
-            //                .onChange(of: isHoveringFloatingMenu) { oldValue, newValue in closeOpenMenu() }
                 .onChange(of: sessions) { refreshActiveSession() }
                 .onAppear {
                     refreshActiveSession() // Retrieve the active session from Swift Data
@@ -52,11 +57,14 @@ struct FloatingWindowView: View {
                         secondsRemaining -= 1
                     }
                 }
+                .onChange(of: requestedLivesSize, { oldValue, newValue in
+                    RequestSizeChange(itemToChange: .Lives, newSize: newValue)
+                })
                 .border(debugMode ? .black : .clear)
             
             VStack(alignment: .trailing) {
                 // MARK: - Floating Liquid Glass Timer
-                FloatingWindowClockView(secondsRemaining: $secondsRemaining, size: timerSize)
+                FloatingWindowClockView(secondsRemaining: $secondsRemaining, size: timerSize, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize)
                     .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                         switch phase {
                         case .active(_):
@@ -73,7 +81,16 @@ struct FloatingWindowView: View {
                             RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 200, height: 80))
                         }
                     }                        .border(debugMode ? Color.red : Color.clear)
+                
+                ZStack(alignment: .topTrailing) {
+                    if livesSize.width + livesSize.height > 0 {
+                        FloatingWindowHearts(totalHearts: activeSession?.totalHeartsCount ?? 0, size: $livesSize, livesLost: $livesLost)
+                                          .border(debugMode ? Color.red : Color.clear)
 
+                    }
+//                    Spacer()
+                }
+                .animation(.spring(), value: livesSize.width + livesSize.height > 0)
 
                 ZStack(alignment: .topTrailing) {
                     if menuSize.width + menuSize.height > 0 {
@@ -104,6 +121,7 @@ struct FloatingWindowView: View {
     enum ItemOnScreen {
         case Timer
         case Menu
+        case Lives
     }
     private func RequestSizeChange(itemToChange: ItemOnScreen, newSize: CGSize) {
         // Get old size
@@ -113,6 +131,8 @@ struct FloatingWindowView: View {
             oldSize = menuSize
         case .Timer:
             oldSize = timerSize
+        case .Lives:
+            oldSize = livesSize
         }
         
         // Increase element size
@@ -122,6 +142,8 @@ struct FloatingWindowView: View {
                 menuSize = newSize
             case .Timer:
                 timerSize = newSize
+            case .Lives:
+                livesSize = newSize
             }
 //        }
         
@@ -136,8 +158,8 @@ struct FloatingWindowView: View {
         func ComputeNewMacOSWindowSize () {
             // Compute new MacOS window Size
             var totalSize : CGSize = CGSize(width: 0, height: 0)
-            totalSize.width = max(timerSize.width, menuSize.width) + padding + outsidePadding*2
-            totalSize.height = timerSize.height + menuSize.height + padding + outsidePadding*2
+            totalSize.width = max(timerSize.width, menuSize.width, livesSize.width) + padding + outsidePadding*2
+            totalSize.height = timerSize.height + menuSize.height + livesSize.height + padding + outsidePadding*2
             resizeMacOSWindow(newSize: totalSize)
         }
     }

@@ -12,10 +12,12 @@ class FocusSession {
     var targetLength : Int
     var completed: Bool
     var date : Date
+    var totalHeartsCount : Int
     
-    init(targetLength: Int, completed: Bool, date: Date) {
+    init(targetLength: Int, completed: Bool, date: Date, totalLivesCount: Int) {
         self.targetLength = targetLength
         self.completed = completed
         self.date = date
+        self.totalHeartsCount = totalLivesCount
     }
 }

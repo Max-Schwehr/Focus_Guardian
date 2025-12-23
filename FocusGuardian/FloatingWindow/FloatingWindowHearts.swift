@@ -8,66 +8,55 @@
 import SwiftUI
 
 struct FloatingWindowHearts: View {
+    let totalHearts: Int
     
-    let data = (1...20).map { "Item \($0)" }
-    
-    let columns = [
+    private let columns = [
         GridItem(.adaptive(minimum: 20))
     ]
     
     @Binding var size : CGSize
+    @Binding var livesLost: Int
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 2) {
             Text("Session Lives")
                 .bold()
             
             Text("Don't run out of lives!")
             
             LazyVGrid(columns: columns, spacing: 7) {
-                ForEach(data, id: \.self) { item in
-                    Image(systemName: "heart.fill")
-                    
+                ForEach(0..<totalHearts, id: \.self) { index in
+                    let lost = min(livesLost, totalHearts)
+                    Image(systemName: index < lost ? "heart.slash.fill" : "heart.fill")
                 }
             }
-            .padding(.top, 10)
-            .onAppear {
-                let minItemWidth: CGFloat = 20
-                let spacing: CGFloat = 7
-                let padding: CGFloat = 16 // matches .padding() default
-                let cols = columnCount(containerWidth: size.width,
-                                       minItemWidth: minItemWidth,
-                                       horizontalSpacing: spacing,
-                                       horizontalPadding: padding)
-                let rows = rowCount(itemCount: data.count, columns: cols)
-                print("Vertically stacked hearts (rows): \(rows)")
-                
-                let heightToIncreaseBy = CGFloat((rows-1) * 20)
-                print("Height to Increase By: \(heightToIncreaseBy)")
-                
-                size.height += heightToIncreaseBy // Note: This value will not be able to increase in the Xcode preview, but will work in the real app
-                
-            }
+            .padding(.top, 9)
+            
         }
         .padding()
-        .glassEffect(.clear.interactive())
+        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 25))
         .frame(width: size.width, height: size.height)
-        
-    }
-    private func columnCount(containerWidth: CGFloat, minItemWidth: CGFloat, horizontalSpacing: CGFloat, horizontalPadding: CGFloat) -> Int {
-        let available = max(0, containerWidth - 2 * horizontalPadding)
-        let count = Int(floor((available + horizontalSpacing) / (minItemWidth + horizontalSpacing)))
-        return max(count, 1)
+        .transition(
+            .scale(scale: 0.0, anchor: .topTrailing)
+            .combined(with: .opacity)
+            .combined(with:
+                    .modifier(
+                        active: BlurModifier(radius: 30),
+                        identity: BlurModifier(radius: 0)
+                    )
+            )
+        )
     }
     
-    private func rowCount(itemCount: Int, columns: Int) -> Int {
-        guard columns > 0 else { return itemCount }
-        return Int(ceil(Double(itemCount) / Double(columns)))
-    }
 }
 
+func getFloatingHeartsWindowHeight(numberOfHearts: Int) -> Int {
+    let numberOfRows : Int = Int(ceil(Double(numberOfHearts) / 8))
+    return 100 + numberOfRows * 10
+}
+
+
 #Preview {
-    FloatingWindowHearts(size: .constant(CGSize(width: 250, height: 100)))
-    
+    FloatingWindowHearts(totalHearts: 8, size: .constant(CGSize(width: 250, height: 100)), livesLost: .constant(3))
 }
 
