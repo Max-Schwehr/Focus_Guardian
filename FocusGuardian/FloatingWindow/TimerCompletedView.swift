@@ -41,7 +41,7 @@ struct TimerCompletedView: View {
 
             }
         }
-        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 25))
+//        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 25))
         .frame(width: size.width, height: size.height)
 
     }

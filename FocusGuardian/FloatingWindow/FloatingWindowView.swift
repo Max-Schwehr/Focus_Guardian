@@ -58,8 +58,10 @@ struct FloatingWindowView: View {
                         try? await Task.sleep(for: .seconds(1))
                         secondsRemaining -= 800
                         if secondsRemaining <= 0 {
-                            floatingClockViewContentOption = .TimerCompletedView
-                            RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 300, height: 250))
+                            withAnimation {
+                                floatingClockViewContentOption = .TimerCompletedView
+                            }
+                            RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 285, height: 110))
                         }
                     }
                 }
@@ -83,10 +85,14 @@ struct FloatingWindowView: View {
                     .onChange(of: headTracker.hasFace) { _, hasFace in // SHOULD SHOW "NOT SHOWING FACE" SIGN
                         print("Camera has face: \(hasFace)")
                         if hasFace {
-                            floatingClockViewContentOption = .Clock
+                            withAnimation {
+                                floatingClockViewContentOption = .Clock
+                            }
                             RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 100, height: 40))
                         } else {
-                            floatingClockViewContentOption = .FaceNotVisible
+                            withAnimation {
+                                floatingClockViewContentOption = .FaceNotVisible
+                            }
                             RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 200, height: 80))
                         }
                     }                        .border(debugMode ? Color.red : Color.clear)
@@ -143,7 +149,8 @@ struct FloatingWindowView: View {
             oldSize = livesSize
         }
         
-        // Increase element size
+        withAnimation {
+            // Increase element size
             switch itemToChange {
             case .Menu:
                 menuSize = newSize
@@ -152,6 +159,7 @@ struct FloatingWindowView: View {
             case .Lives:
                 livesSize = newSize
             }
+        }
         
         if (newSize.width < oldSize.width || newSize.height < oldSize.height) { // If the object is decreasing its size, we need to wait till the item's animation play's before resizing the MacOS Window
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {

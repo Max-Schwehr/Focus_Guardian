@@ -20,9 +20,26 @@ struct FloatingClockView: View {
             }
         }
         .frame(width: size.width, height: size.height)
-        .glassEffect()
         .animation(.spring(), value: size)
+        .modifier(GlassEffectWithVariableCornerRadius(reduceRoundness: viewContentOptions == .TimerCompletedView))
+//        .glassEffect(in: .rect(cornerRadius: 25.0))
         
+    }
+}
+
+// The timer can expand, and some of the content options need a different corner radius, which is specified using this...
+private struct GlassEffectWithVariableCornerRadius: ViewModifier {
+    let reduceRoundness: Bool
+    func body(content: Content) -> some View {
+        if reduceRoundness {
+            withAnimation {
+                content.glassEffect(in: .rect(cornerRadius: 25.0))
+            }
+        } else {
+            withAnimation {
+                content.glassEffect()
+            }
+        }
     }
 }
 
