@@ -23,7 +23,7 @@ struct ContentView: View {
             Group { // Switch the view based on the users selected page
                 switch selection {
                 case .home:
-                    HomeView()
+                    SessionCreationView()
                 case .sessions:
                     SessionsView()
                 case .settings:

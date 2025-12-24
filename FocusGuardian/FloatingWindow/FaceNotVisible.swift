@@ -69,6 +69,6 @@ struct FaceNotVisible: View {
 }
 
 #Preview {
-    FloatingWindowClockView(secondsRemaining: .constant(120), size: CGSize(width: 200, height: 80), livesLost: .constant(3), requestedLivesSize: .constant(CGSize(width: 250, height: 110)))
+    FloatingClockView(size: .constant(CGSize(width: 200, height: 80)), secondsRemaining: .constant(120), livesLost: .constant(3), requestedLivesSize: .constant(CGSize(width: 250, height: 110)), viewContentOptions: .constant(.Clock))
         .padding()
 }

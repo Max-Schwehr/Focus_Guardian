@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FloatingWindowHearts: View {
+struct FloatingLivesView: View {
     let totalHearts: Int
     
     private let columns = [
@@ -68,6 +68,6 @@ func getFloatingHeartsWindowHeight(numberOfHearts: Int) -> Int {
 
 
 #Preview {
-    FloatingWindowHearts(totalHearts: 8, size: .constant(CGSize(width: 250, height: 100)), livesLost: .constant(3))
+    FloatingLivesView(totalHearts: 8, size: .constant(CGSize(width: 250, height: 100)), livesLost: .constant(3))
 }
 

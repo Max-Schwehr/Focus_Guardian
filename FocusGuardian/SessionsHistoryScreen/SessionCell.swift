@@ -10,15 +10,6 @@ import SwiftUI
 struct SessionCell: View {
     var session: FocusSession
     var body: some View {
-        let corner: CGFloat = 16
-        let gradient = LinearGradient(
-            colors: session.completed
-                ? [Color.green.opacity(0.35), Color.green.opacity(0.12)]
-                : [Color.red.opacity(0.35), Color.red.opacity(0.12)],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-
         HStack {
             HStack {
                 Image(systemName: session.completed ? "checkmark.circle" : "xmark.circle")
@@ -35,35 +26,11 @@ struct SessionCell: View {
             }
             .padding(12)
         }
-        .background(
-            ZStack {
-                // Subtle tint under the glass to feel like part of the material
-                RoundedRectangle(cornerRadius: corner, style: .continuous)
-                    .fill(gradient)
-//                    .blendMode(.multiply)
-                    .opacity(1.0)
-
-                // A faint inner highlight for depth
-                RoundedRectangle(cornerRadius: corner, style: .continuous)
-                    .strokeBorder(.white.opacity(0.4))
-//                    .blendMode(.screen)
-            }
-        )
-
-        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: corner))
-        .contentShape(RoundedRectangle(cornerRadius: corner, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: corner, style: .continuous)
-                .strokeBorder(.white.opacity(0.08))
-        )
-        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
-        .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
-        .listRowBackground(Color.clear)
+        .glassEffect(session.completed ? .regular.tint(.green.opacity(0.04)) : .regular.tint(.red.opacity(0.04)), in: .rect(cornerRadius: 16))
     }
 }
 
 #Preview {
     SessionCell(session: mocSession)
-        .frame(width: 400)
         .padding()
 }

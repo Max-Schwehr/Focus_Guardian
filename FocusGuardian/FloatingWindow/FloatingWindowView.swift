@@ -19,6 +19,8 @@ struct FloatingWindowView: View {
     
     @State private var requestedLivesSize: CGSize = CGSize(width: 0, height: 0) // Remember, all variables above must use the requestSizeChange function in-order to maintain proper order, relation, and animations within this file. Thus, child views can adjust this variable, and when this changes we run the function.
     
+    @State private var floatingClockViewContentOption : FloatingClockViewContentOptions = .Clock
+    
     let padding : CGFloat = 10
     let expandedMenuSize = CGSize(width: 260, height: 120)
     let outsidePadding : CGFloat = 10
@@ -54,7 +56,11 @@ struct FloatingWindowView: View {
                 .task { // Reduces seconds remaining by 1 every second
                     while secondsRemaining > 0 {
                         try? await Task.sleep(for: .seconds(1))
-                        secondsRemaining -= 1
+                        secondsRemaining -= 800
+                        if secondsRemaining <= 0 {
+                            floatingClockViewContentOption = .TimerCompletedView
+                            RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 300, height: 250))
+                        }
                     }
                 }
                 .onChange(of: requestedLivesSize, { oldValue, newValue in
@@ -65,7 +71,7 @@ struct FloatingWindowView: View {
             
             VStack(alignment: .trailing) {
                 // MARK: - Floating Liquid Glass Timer
-                FloatingWindowClockView(secondsRemaining: $secondsRemaining, size: timerSize, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize)
+                FloatingClockView(size: $timerSize, secondsRemaining: $secondsRemaining, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize, viewContentOptions: $floatingClockViewContentOption)
                     .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                         switch phase {
                         case .active(_):
@@ -77,15 +83,17 @@ struct FloatingWindowView: View {
                     .onChange(of: headTracker.hasFace) { _, hasFace in // SHOULD SHOW "NOT SHOWING FACE" SIGN
                         print("Camera has face: \(hasFace)")
                         if hasFace {
+                            floatingClockViewContentOption = .Clock
                             RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 100, height: 40))
                         } else {
+                            floatingClockViewContentOption = .FaceNotVisible
                             RequestSizeChange(itemToChange: .Timer, newSize: CGSize(width: 200, height: 80))
                         }
                     }                        .border(debugMode ? Color.red : Color.clear)
                 
                 ZStack(alignment: .topTrailing) {
                     if livesSize.width + livesSize.height > 0 {
-                        FloatingWindowHearts(totalHearts: activeSession?.totalHeartsCount ?? 0, size: $livesSize, livesLost: $livesLost)
+                        FloatingLivesView(totalHearts: activeSession?.totalHeartsCount ?? 0, size: $livesSize, livesLost: $livesLost)
                                           .border(debugMode ? Color.red : Color.clear)
 
                     }
@@ -96,7 +104,7 @@ struct FloatingWindowView: View {
                 ZStack(alignment: .topTrailing) {
                     if menuSize.width + menuSize.height > 0 {
                         // MARK: - Floating Detail Menu
-                        FloatingWindowMenuView(size: menuSize, secondsRemaining: $secondsRemaining, activeSession: $activeSession)
+                        FloatingMenuView(size: menuSize, secondsRemaining: $secondsRemaining, activeSession: $activeSession)
                             .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                                 switch phase {
                                 case .active(_):
@@ -106,7 +114,6 @@ struct FloatingWindowView: View {
                                 }
                             }
                             .border(debugMode ? Color.red : Color.clear)
-//                            .animation(.spring(), value: menuSize.width + menuSize.height > 0)
                     }
                 }
                     .animation(.spring(), value: menuSize.width + menuSize.height > 0)
@@ -137,7 +144,6 @@ struct FloatingWindowView: View {
         }
         
         // Increase element size
-//        withAnimation {
             switch itemToChange {
             case .Menu:
                 menuSize = newSize
@@ -146,7 +152,6 @@ struct FloatingWindowView: View {
             case .Lives:
                 livesSize = newSize
             }
-//        }
         
         if (newSize.width < oldSize.width || newSize.height < oldSize.height) { // If the object is decreasing its size, we need to wait till the item's animation play's before resizing the MacOS Window
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
