@@ -5,8 +5,8 @@ import SwiftData
 
 /// A small always-on-top floating window that hosts a SwiftUI timer view with Liquid Glass.
 @MainActor
-final class FloatingWindowManager: NSObject {
-    static let shared = FloatingWindowManager()
+final class FloatingMacOSWindowManager: NSObject {
+    static let shared = FloatingMacOSWindowManager()
 
     private var panel: NSPanel?
     private var injectedContainer: ModelContainer?
