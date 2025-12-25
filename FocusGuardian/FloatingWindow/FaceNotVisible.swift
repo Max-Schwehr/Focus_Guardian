@@ -60,11 +60,13 @@ struct FaceNotVisible: View {
         }
     }
 
-    var expansivePlane: some View {
-        HStack {
-            VStack { Spacer() }
-            Spacer()
-        }
+    
+}
+
+var expansivePlane: some View {
+    HStack {
+        VStack { Spacer() }
+        Spacer()
     }
 }
 

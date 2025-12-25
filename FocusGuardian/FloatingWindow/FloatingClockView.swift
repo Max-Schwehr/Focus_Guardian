@@ -19,11 +19,13 @@ struct FloatingClockView: View {
                 TimerCompletedView(size: $size)
             }
         }
+        .mask {
+            expansivePlane
+                .frame(width: size.width, height: size.height)
+                .modifier(GlassEffectWithVariableCornerRadius(reduceRoundness: viewContentOptions == .TimerCompletedView))
+        }
         .frame(width: size.width, height: size.height)
-        .animation(.spring(), value: size)
         .modifier(GlassEffectWithVariableCornerRadius(reduceRoundness: viewContentOptions == .TimerCompletedView))
-//        .glassEffect(in: .rect(cornerRadius: 25.0))
-        
     }
 }
 
@@ -32,13 +34,9 @@ private struct GlassEffectWithVariableCornerRadius: ViewModifier {
     let reduceRoundness: Bool
     func body(content: Content) -> some View {
         if reduceRoundness {
-            withAnimation {
-                content.glassEffect(in: .rect(cornerRadius: 25.0))
-            }
+            content.glassEffect(in: .rect(cornerRadius: 25.0))
         } else {
-            withAnimation {
-                content.glassEffect()
-            }
+            content.glassEffect()
         }
     }
 }

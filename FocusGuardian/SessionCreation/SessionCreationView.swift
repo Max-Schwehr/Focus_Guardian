@@ -54,7 +54,7 @@ struct SessionCreationView: View {
                 #if os(macOS)
                 if !didShowFloatingTimer { // Normally also check contract validity
                     didShowFloatingTimer = true
-                    FloatingWindowManager.shared.show(using: modelContainer)
+                    FloatingMacOSWindowManager.shared.show(using: modelContainer)
                     // Optionally close the onboarding window
                     NSApp.keyWindow?.close()
                 }

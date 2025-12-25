@@ -12,7 +12,7 @@ extension FloatingWindowView {
         case menu
         case lives
     }
-
+    
     /// Animates resizing an item and updates the host window size accordingly.
     func requestSizeChange(itemToChange: ItemOnScreen, newSize: CGSize) {
         // Get old size
@@ -25,8 +25,8 @@ extension FloatingWindowView {
         case .lives:
             oldSize = livesSize
         }
-
-        withAnimation {
+        
+//        withAnimation {
             // Increase element size
             switch itemToChange {
             case .menu:
@@ -35,9 +35,9 @@ extension FloatingWindowView {
                 timerSize = newSize
             case .lives:
                 livesSize = newSize
-            }
+//            }
         }
-
+        
         if (newSize.width < oldSize.width || newSize.height < oldSize.height) {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 ComputeNewMacOSWindowSize()
@@ -45,33 +45,33 @@ extension FloatingWindowView {
         } else {
             ComputeNewMacOSWindowSize()
         }
-
+        
         func ComputeNewMacOSWindowSize () {
             // Compute new MacOS window Size
             var totalSize : CGSize = CGSize(width: 0, height: 0)
-            totalSize.width = max(timerSize.width, menuSize.width, livesSize.width) + padding + outsidePadding*2
-            totalSize.height = timerSize.height + menuSize.height + livesSize.height + padding + outsidePadding*2
+            totalSize.width = max(timerSize.width, menuSize.width, livesSize.width) + outsidePadding*2
+            totalSize.height = timerSize.height + menuSize.height + livesSize.height + padding*2 + outsidePadding*2
             resizeMacOSWindow(newSize: totalSize)
         }
     }
-
+    
     /// Returns a size offset by the given x and y amounts.
     func offsetCGSize(input: CGSize, xOffset: CGFloat, yOffset: CGFloat) -> CGSize {
         return CGSize(width: input.width + xOffset, height: input.height + yOffset)
     }
-
+    
     /// Resizes and repositions the macOS host window to fit all floating content.
     func resizeMacOSWindow(newSize: CGSize) {
         print("macOSWindowSize.height: \(macOSWindowSize.height)")
         print("newSize.height: \(newSize.height)")
-
+        
         // Move the window position to keep the liquid glass part at the same position
-        FloatingWindowManager.shared.moveWindow(xOffset: macOSWindowSize.width - newSize.width, yOffset: 0)
-
+        FloatingMacOSWindowManager.shared.moveWindow(xOffset: macOSWindowSize.width - newSize.width, yOffset: 0)
+        
         // Resize the MacOS window
         macOSWindowSize = newSize
     }
-
+    
     /// Loads the latest focus session and updates `activeSession` and `secondsRemaining`.
     func refreshActiveSession() {
         do {
@@ -82,7 +82,7 @@ extension FloatingWindowView {
             print("No active session available or error: \(error)")
         }
     }
-
+    
     /// Shows or hides the detail menu based on hover state.
     func hideShowMenu(phase: HoverPhase) {
         switch phase {
@@ -92,21 +92,20 @@ extension FloatingWindowView {
             requestSizeChange(itemToChange: .menu, newSize: CGSize(width: 0, height: 0))
         }
     }
-
+    
     /// Decrements the countdown each second and updates UI when it completes.
     func runCountdownTimer() async {
         while secondsRemaining > 0 {
             try? await Task.sleep(for: .seconds(1))
-            secondsRemaining -= 800
+            secondsRemaining -= 1
             if secondsRemaining <= 0 {
-                withAnimation {
-                    floatingClockViewContentOption = .TimerCompletedView
-                }
+                floatingClockViewContentOption = .TimerCompletedView
+                
                 requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 285, height: 110))
             }
         }
     }
-
+    
     /// Updates timer state and size based on whether a face is detected.
     func handleFaceDetectionChange(_ hasFace: Bool) {
         if hasFace {
