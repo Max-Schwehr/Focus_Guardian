@@ -69,6 +69,7 @@ final class FloatingMacOSWindowManager: NSObject {
         panel.titleVisibility = .hidden
         panel.titlebarAppearsTransparent = true
         panel.animationBehavior = .utilityWindow
+        panel.appearance = NSAppearance(named: .aqua) // or .aqua
 
         // Host SwiftUI view with the injected SwiftData model container so @Query works
         let hosting = NSHostingView(rootView: FloatingWindowView().modelContainer(container))

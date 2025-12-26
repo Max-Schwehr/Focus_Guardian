@@ -20,28 +20,27 @@ struct FloatingLivesView: View {
     @State var test = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading) {
             Text("Session Lives")
                 .bold()
             
             Text("Don't run out of lives!")
                 .onAppear {
-//                    print("Total Hearts = \(totalHearts)")
                     print("Width: \(size.width), Height: \(size.height)")
                     test = true
                 }
-//            if test {
+                .foregroundStyle(.secondary)
+            
+            
                 LazyVGrid(columns: columns, spacing: 7) {
                     ForEach(0..<totalHearts, id: \.self) { index in
                     let lost = min(livesLost, totalHearts)
-                        Image(systemName: index < lost ? "heart.slash.fill" : "heart.fill")
+                        Text(index < lost ? "💔" : "❤️")
+                            .shadow(color: .red.opacity(0.7), radius: 7)
                     }
                 }
                 .frame(minWidth: 1, minHeight: 1)
-                .padding(.top, 9)
-//                .frame(width: 300, height: 300)
-//            }
-            
+                .padding(.top, 3)
         }
         .padding()
         .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 25))

@@ -13,6 +13,7 @@ var standardAnimation : Animation = .spring(duration: 0.5, bounce: 0.3)
 struct FloatingWindowView: View {
     // Describes how many minutes the timer has left, initially set to the `activeSession`'s value for targetMinutes by the `refreshActiveSession` function
     @State var secondsRemaining = 0
+    @State var isCountingDown = true // Is counting Up or Down?
     
     // Behind each floating element, is a clear MacOS window, the quickly expands or retracts to be able to fit any animations, or content that appears floating to the user.
     @State var macOSWindowSize: CGSize = CGSize(width: 100, height: 40)
@@ -27,7 +28,7 @@ struct FloatingWindowView: View {
     let padding : CGFloat = 10
     let expandedMenuSize = CGSize(width: 260, height: 120)
     let outsidePadding : CGFloat = 10
-    let debugMode = true
+    let debugMode = false
     
     // Size of the timer liquid glass
     
@@ -57,15 +58,23 @@ struct FloatingWindowView: View {
                 .onChange(of: requestedLivesSize, { oldValue, newValue in requestSizeChange(itemToChange: .lives, newSize: newValue) })
                 .onChange(of: headTracker.hasFace) { _, hasFace in handleFaceDetectionChange(hasFace) }
                 .border(debugMode ? .black : .clear)
+//                .glassEffect(.regular.tint(.blue))
             
             VStack(alignment: .trailing, spacing: padding) {
                 // MARK: - Floating Liquid Glass Timer
-                FloatingClockView(size: $timerSize, secondsRemaining: $secondsRemaining, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize, viewContentOptions: $floatingClockViewContentOption)
+                FloatingClockView(size: $timerSize, secondsRemaining: $secondsRemaining, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize, viewContentOptions: $floatingClockViewContentOption, isCountingDown: $isCountingDown, onAddTime: {
+                    isCountingDown = false
+                    Task { await runCountdownTimer()}
+                    floatingClockViewContentOption = .Clock
+                    requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40))
+                })
                     .border(debugMode ? Color.red : Color.clear)
                     .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                         hideShowMenu(phase: phase)
                     } .animation(standardAnimation, value: timerSize)
-
+                    .onTapGesture {
+                        secondsRemaining = 5
+                    }
                 
                 // MARK: - Floating Lives View
                 ZStack(alignment: .topTrailing) {
@@ -90,8 +99,7 @@ struct FloatingWindowView: View {
                 Spacer()
             }
             
-        }
-        
+        }        
     }
 }
 

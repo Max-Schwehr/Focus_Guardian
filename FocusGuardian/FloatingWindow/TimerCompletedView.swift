@@ -9,45 +9,49 @@ import SwiftUI
 
 struct TimerCompletedView: View {
     @Binding var size : CGSize
+    @Binding var isCountingDown : Bool
+    let onAddTime: () -> Void
     var body: some View {
         VStack {
             Text("Session Complete!").bold()
             Text("Add more time, or end the session!")
-                .padding(.bottom, 5)
+                .padding(.bottom, 4)
+                .foregroundStyle(.secondary)
+            
             HStack {
                 Button {
-                    
+                    onAddTime()
                 } label: {
                     Label("Add Time", systemImage: "plus.circle")
-                        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
+                        .background(
+                            Capsule().fill(Color(.systemFill))
+                        )
                 }
                 .buttonStyle(.plain)
-                .glassEffect()
                 
                 Button {
                     
                 } label: {
                     Label("End Session", systemImage: "checkmark.circle")
-                        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .foregroundStyle(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
-                        .foregroundStyle(.white)
+                        .background(
+                            Capsule().fill(Color.blue)
+                        )
                 }
-                .glassEffect(.regular.tint(.blue))
                 .buttonStyle(.plain)
-                .glassEffect()
 
             }
         }
-//        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 25))
         .frame(width: size.width, height: size.height)
 
     }
 }
 
 #Preview {
-    TimerCompletedView(size: .constant(CGSize(width: 300, height: 100)))
+    TimerCompletedView(size: .constant(CGSize(width: 300, height: 100)), isCountingDown: .constant(true), onAddTime: {})
         .padding()
 }

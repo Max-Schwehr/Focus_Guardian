@@ -26,16 +26,16 @@ extension FloatingWindowView {
             oldSize = livesSize
         }
         
-//        withAnimation {
-            // Increase element size
-            switch itemToChange {
-            case .menu:
-                menuSize = newSize
-            case .timer:
-                timerSize = newSize
-            case .lives:
-                livesSize = newSize
-//            }
+        //        withAnimation {
+        // Increase element size
+        switch itemToChange {
+        case .menu:
+            menuSize = newSize
+        case .timer:
+            timerSize = newSize
+        case .lives:
+            livesSize = newSize
+            //            }
         }
         
         if (newSize.width < oldSize.width || newSize.height < oldSize.height) {
@@ -85,35 +85,48 @@ extension FloatingWindowView {
     
     /// Shows or hides the detail menu based on hover state.
     func hideShowMenu(phase: HoverPhase) {
-        switch phase {
-        case .active(_):
-            requestSizeChange(itemToChange: .menu, newSize: expandedMenuSize)
-        case .ended:
-            requestSizeChange(itemToChange: .menu, newSize: CGSize(width: 0, height: 0))
+        if floatingClockViewContentOption == .TimerCompletedView {
+            return
         }
+        switch phase {
+            case .active(_):
+                requestSizeChange(itemToChange: .menu, newSize: expandedMenuSize)
+            case .ended:
+                requestSizeChange(itemToChange: .menu, newSize: CGSize(width: 0, height: 0))
+        }
+        
     }
     
     /// Decrements the countdown each second and updates UI when it completes.
     func runCountdownTimer() async {
-        while secondsRemaining > 0 {
+        print("Run Countdown Timer")
+        while secondsRemaining > 0 || (!isCountingDown) {
             try? await Task.sleep(for: .seconds(1))
-            secondsRemaining -= 1
+            withAnimation {
+                if isCountingDown {
+                    secondsRemaining -= 1
+                } else {
+                    secondsRemaining += 1
+                }
+            }
             if secondsRemaining <= 0 {
                 floatingClockViewContentOption = .TimerCompletedView
-                
-                requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 285, height: 110))
+                requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 300, height: 123))
+                activeSession?.completed = true
             }
         }
     }
     
     /// Updates timer state and size based on whether a face is detected.
     func handleFaceDetectionChange(_ hasFace: Bool) {
-        if hasFace {
-            floatingClockViewContentOption = .Clock
-            requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40))
-        } else {
-            floatingClockViewContentOption = .FaceNotVisible
-            requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 200, height: 80))
+        if floatingClockViewContentOption != .TimerCompletedView {
+            if hasFace {
+                floatingClockViewContentOption = .Clock
+                requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40))
+            } else {
+                floatingClockViewContentOption = .FaceNotVisible
+                requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 200, height: 80))
+            }
         }
     }
 }
