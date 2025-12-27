@@ -11,6 +11,7 @@ extension FloatingWindowView {
         case timer
         case menu
         case lives
+        case stopButton
     }
     
     /// Animates resizing an item and updates the host window size accordingly.
@@ -24,6 +25,9 @@ extension FloatingWindowView {
             oldSize = timerSize
         case .lives:
             oldSize = livesSize
+        case .stopButton:
+            print("")
+            // Do nothing
         }
         
         //        withAnimation {
@@ -35,7 +39,10 @@ extension FloatingWindowView {
             timerSize = newSize
         case .lives:
             livesSize = newSize
-            //            }
+        case .stopButton:
+            print("")
+
+            // Do nothing
         }
         
         if (newSize.width < oldSize.width || newSize.height < oldSize.height) {
@@ -48,8 +55,15 @@ extension FloatingWindowView {
         
         func ComputeNewMacOSWindowSize () {
             // Compute new MacOS window Size
+            
+            var timerSizeWidth = timerSize.width
+            if itemToChange == .stopButton && newSize.width > 0 {
+                timerSizeWidth += 80 // Add room for the stop button
+                print("Appended 80")
+            }
+            
             var totalSize : CGSize = CGSize(width: 0, height: 0)
-            totalSize.width = max(timerSize.width, menuSize.width, livesSize.width) + outsidePadding*2
+            totalSize.width = max(timerSizeWidth, menuSize.width, livesSize.width) + outsidePadding*2
             totalSize.height = timerSize.height + menuSize.height + livesSize.height + padding*2 + outsidePadding*2
             resizeMacOSWindow(newSize: totalSize)
         }

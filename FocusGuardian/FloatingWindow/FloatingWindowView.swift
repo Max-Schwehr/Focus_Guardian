@@ -60,6 +60,8 @@ struct FloatingWindowView: View {
                 .onChange(of: isCountingDown, { _, isCountingDown in
                     if !isCountingDown {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            requestSizeChange(itemToChange: .stopButton, newSize: CGSize(width: 40, height: 40)) // Note, this must only be greater then zero for the function to add width, .stopButton has a special implementation within the function
+                            
                             withAnimation {
                                 showStopButton = true
                             }
@@ -74,12 +76,11 @@ struct FloatingWindowView: View {
                 // MARK: - Floating Liquid Glass Timer
                 GlassEffectContainer(spacing: 40.0) {
                     HStack(spacing: 40.0) {
-//                        if showStopButton {
-//                            Image(systemName: "stop.circle")
-//                                .glassEffect()
-//                                .frame(width: 40, height: 40)
-//                            
-//                        }
+                        if showStopButton {
+                            Image(systemName: "stop.circle")
+                                .glassEffect()
+                                .frame(width: 40, height: 40)
+                        }
                         
                         FloatingClockView(size: $timerSize, secondsRemaining: $secondsRemaining, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize, viewContentOptions: $floatingClockViewContentOption, isCountingDown: $isCountingDown, onAddTime: {
                             isCountingDown = false
@@ -95,28 +96,32 @@ struct FloatingWindowView: View {
                             }
                     }
                 }
+                .frame(width: showStopButton ? timerSize.width + 80 : timerSize.width) // Add width for the stop button if it is there
                 // MARK: - Floating Lives View
                 ZStack(alignment: .topTrailing) {
                     if livesSize.width + livesSize.height > 0 {
                         FloatingLivesView(totalHearts: activeSession?.totalHeartsCount ?? 0, size: $livesSize, livesLost: $livesLost)
-                                          .border(debugMode ? Color.red : Color.clear)
+                                         
                     }
-                } .animation(standardAnimation, value: livesSize)
+                } .animation(standardAnimation, value: livesSize) .border(debugMode ? Color.red : Color.clear)
                 
 
                 // MARK: - Floating Detail Menu
                 ZStack(alignment: .topTrailing) {
                     if menuSize.width + menuSize.height > 0 {
                         FloatingMenuView(size: menuSize, secondsRemaining: $secondsRemaining, activeSession: $activeSession)
-                            .border(debugMode ? Color.red : Color.clear)
                             .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                                 hideShowMenu(phase: phase)
                             }
                     }
                 } .animation(standardAnimation, value: menuSize)
+                    .border(debugMode ? Color.red : Color.clear)
+
                 
                 Spacer()
-            }
+
+            }                    .border(debugMode ? Color.green : Color.clear).frame(height: macOSWindowSize.height)
+
             
         }        
     }
