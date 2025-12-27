@@ -35,8 +35,30 @@ final class FloatingMacOSWindowManager: NSObject {
 
     /// Destroy the panel completely.
     func close() {
+        // Close and release the floating panel
         panel?.close()
         panel = nil
+
+        // Open ContentView in a standard window (like on app launch)
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 900, height: 600),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "FocusGuardian"
+        window.center()
+
+        // Host SwiftUI ContentView, injecting the same SwiftData container if available
+        let root = ContentView()
+        if let container = injectedContainer {
+            window.contentViewController = NSHostingController(rootView: root.modelContainer(container))
+        } else {
+            window.contentViewController = NSHostingController(rootView: root)
+        }
+
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     func moveWindow(xOffset: CGFloat, yOffset: CGFloat) {

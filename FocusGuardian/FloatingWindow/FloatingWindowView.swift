@@ -29,7 +29,7 @@ struct FloatingWindowView: View {
     let padding : CGFloat = 10
     let expandedMenuSize = CGSize(width: 260, height: 120)
     let outsidePadding : CGFloat = 10
-    let debugMode = true
+    let debugMode = false
     
     // Size of the timer liquid glass
     
@@ -59,12 +59,12 @@ struct FloatingWindowView: View {
                 .onChange(of: requestedLivesSize, { oldValue, newValue in requestSizeChange(itemToChange: .lives, newSize: newValue) })
                 .onChange(of: isCountingDown, { _, isCountingDown in
                     if !isCountingDown {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            requestSizeChange(itemToChange: .stopButton, newSize: CGSize(width: 40, height: 40)) // Note, this must only be greater then zero for the function to add width, .stopButton has a special implementation within the function
-                            
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
+                            print("REQUESTED STOP BUTTON")
                             withAnimation {
                                 showStopButton = true
                             }
+                            requestSizeChange(itemToChange: .stopButton, newSize: CGSize(width: 40, height: 40)) // Note, this must only be greater then zero for the function to add width, .stopButton has a special implementation within the function
                         }
                     }
                 })
@@ -74,19 +74,27 @@ struct FloatingWindowView: View {
             
             VStack(alignment: .trailing, spacing: padding) {
                 // MARK: - Floating Liquid Glass Timer
-                GlassEffectContainer(spacing: 40.0) {
-                    HStack(spacing: 40.0) {
+                GlassEffectContainer(spacing: 10.0) {
+                    HStack(spacing: 10.0) {
                         if showStopButton {
-                            Image(systemName: "stop.circle")
-                                .glassEffect()
-                                .frame(width: 40, height: 40)
+                            Button(action: {
+                                FloatingMacOSWindowManager.shared.close()
+                            }) {
+                                Image(systemName: "stop.circle")
+                                    .frame(width: 40, height: 40)
+                                    .glassEffect()
+                            }
+                            .buttonStyle(.plain)
                         }
                         
                         FloatingClockView(size: $timerSize, secondsRemaining: $secondsRemaining, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize, viewContentOptions: $floatingClockViewContentOption, isCountingDown: $isCountingDown, onAddTime: {
                             isCountingDown = false
                             Task { await runCountdownTimer()}
                             floatingClockViewContentOption = .Clock
-                            requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40)) })
+                            requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40)) }, onEndSession: {
+                                FloatingMacOSWindowManager.shared.close()
+
+                            })
                         .border(debugMode ? Color.red : Color.clear)
                         .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                             hideShowMenu(phase: phase)
@@ -96,7 +104,7 @@ struct FloatingWindowView: View {
                             }
                     }
                 }
-                .frame(width: showStopButton ? timerSize.width + 80 : timerSize.width) // Add width for the stop button if it is there
+                .frame(width: showStopButton ? timerSize.width + 50 : timerSize.width) // Add width for the stop button if it is there
                 // MARK: - Floating Lives View
                 ZStack(alignment: .topTrailing) {
                     if livesSize.width + livesSize.height > 0 {
@@ -132,4 +140,5 @@ struct FloatingWindowView: View {
         .padding()
 }
 #endif
+
 

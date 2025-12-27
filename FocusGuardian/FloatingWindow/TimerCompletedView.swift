@@ -11,6 +11,7 @@ struct TimerCompletedView: View {
     @Binding var size : CGSize
     @Binding var isCountingDown : Bool
     let onAddTime: () -> Void
+    let onEndSession: () -> Void
     var body: some View {
         VStack {
             Text("Session Complete!").bold()
@@ -32,7 +33,7 @@ struct TimerCompletedView: View {
                 .buttonStyle(.plain)
                 
                 Button {
-                    
+                    onEndSession()
                 } label: {
                     Label("End Session", systemImage: "checkmark.circle")
                         .foregroundStyle(.white)
@@ -52,6 +53,6 @@ struct TimerCompletedView: View {
 }
 
 #Preview {
-    TimerCompletedView(size: .constant(CGSize(width: 300, height: 100)), isCountingDown: .constant(true), onAddTime: {})
+    TimerCompletedView(size: .constant(CGSize(width: 300, height: 100)), isCountingDown: .constant(true), onAddTime: {}, onEndSession: {})
         .padding()
 }
