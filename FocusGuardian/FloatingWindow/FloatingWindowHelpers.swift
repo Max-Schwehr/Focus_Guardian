@@ -113,13 +113,14 @@ extension FloatingWindowView {
                 floatingClockViewContentOption = .TimerCompletedView
                 requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 300, height: 123))
                 activeSession?.completed = true
+                headTracker.stop() // Turn off the users camera
             }
         }
     }
     
     /// Updates timer state and size based on whether a face is detected.
     func handleFaceDetectionChange(_ hasFace: Bool) {
-        if floatingClockViewContentOption != .TimerCompletedView {
+        if floatingClockViewContentOption != .TimerCompletedView && isCountingDown {
             if hasFace {
                 floatingClockViewContentOption = .Clock
                 requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40))
