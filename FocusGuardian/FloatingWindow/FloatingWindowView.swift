@@ -100,7 +100,8 @@ struct FloatingWindowView: View {
                             hideShowMenu(phase: phase)
                         } .animation(standardAnimation, value: timerSize)
                             .onTapGesture {
-                                secondsRemaining = 5
+                                checkSafari()
+                                checkGoogleChrome()
                             }
                     }
                 }

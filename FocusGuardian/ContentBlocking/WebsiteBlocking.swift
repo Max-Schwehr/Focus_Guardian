@@ -22,3 +22,22 @@ func checkSafari() {
     """
     runAppleScript(script)
 }
+
+func checkGoogleChrome() {
+    let script = """
+    tell application "Google Chrome"
+        if (count of windows) = 0 then return
+
+        tell front window
+            set currentTab to active tab
+            set currentURL to URL of currentTab
+
+            if currentURL contains "youtube.com" then
+                set URL of currentTab to "https://example.com"
+            end if
+        end tell
+    end tell
+    """
+    runAppleScript(script)
+}
+
