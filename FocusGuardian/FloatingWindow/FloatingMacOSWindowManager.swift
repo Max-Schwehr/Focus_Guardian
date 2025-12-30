@@ -94,7 +94,10 @@ final class FloatingMacOSWindowManager: NSObject {
         panel.appearance = NSAppearance(named: .aqua) // or .aqua
 
         // Host SwiftUI view with the injected SwiftData model container so @Query works
-        let hosting = NSHostingView(rootView: FloatingWindowView().modelContainer(container))
+        let root = FloatingWindowView()
+            .modelContainer(container)
+        
+        let hosting = NSHostingView(rootView: root)
         hosting.frame = NSRect(origin: .zero, size: CGSize(width: 0, height: 0))
         hosting.autoresizingMask = [.width, .height]
         panel.contentView = hosting

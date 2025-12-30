@@ -8,11 +8,14 @@
 import Foundation
 import Combine
 import AppKit
+import SwiftUI
+
+// This is also used in the views
+var blockedWebsites : [String] = []
+
 
 @MainActor
 final class WebsiteBlockerSession: ObservableObject {
-
-    let blockedWebsites = ["youtube.com", "instagram.com"]
 
     @Published private(set) var isRunning: Bool = false
 

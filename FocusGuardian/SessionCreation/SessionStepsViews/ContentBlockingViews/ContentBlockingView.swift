@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ContentBlockingView: View {
     @State private var showingWebsiteBlocker = true
-    @State private var blockedWebsites : [String] = []
     @State private var textField : String = ""
+    @State private var blockedWebsitesLocal = [""] // Need a local version so we can apply `@State` to the view
     var body: some View {
         VStack(spacing: 10) {
             VStack(spacing: 3) {
@@ -34,7 +34,10 @@ struct ContentBlockingView: View {
                     .padding(.top, 8)
                     .frame(width: 400)
             }
-            
+            .padding(.top, 30)
+            .onDisappear {
+                blockedWebsites = blockedWebsitesLocal // Move these changes to the backend
+            }
             
             Text("Enter a website to block")
                 .padding(.top, 10)
@@ -42,14 +45,14 @@ struct ContentBlockingView: View {
             
             TextField("example.com", text: $textField)
                 .onSubmit {
-                    blockedWebsites.append(textField)
+                    blockedWebsitesLocal.append(textField)
                 }
                 .frame(width: 400)
             
             HStack {
                 VStack {
                     ScrollView {
-                        ForEach(blockedWebsites, id: \.self) { website in
+                        ForEach(blockedWebsitesLocal, id: \.self) { website in
                             Text(website)
                                 .padding(.vertical, 3)
                         }

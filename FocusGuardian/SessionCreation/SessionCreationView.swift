@@ -4,6 +4,7 @@ import SwiftData
 private enum SessionStep: Int, CaseIterable {
     case timeInput
     case livesInput
+    case contentBlockingInput
     case contractInput
 }
 
@@ -32,6 +33,8 @@ struct SessionCreationView: View {
                 case .timeInput:
                     TimeInputView(hours: $hours, minutes: $minutes, lives: $lives)
                         .transition(transitionForCurrentDirection())
+                case .contentBlockingInput:
+                    ContentBlockingView()
                 case .livesInput:
                     LivesInputView(lives: $lives)
                         .transition(transitionForCurrentDirection())
@@ -80,11 +83,11 @@ struct SessionCreationView: View {
 
                 Button(action: {
                     // If you want to advance through steps, call goNext()
-                    // goNext()
+                     goNext()
 
                     // Current behavior (from SessionOnboardingView): create a dummy session immediately
-                    let session = FocusSession(targetLength: 120, completed: false, date: Date(), totalLivesCount: 5)
-                    modelContext.insert(session)
+//                    let session = FocusSession(targetLength: 120, completed: false, date: Date(), totalLivesCount: 5)
+//                    modelContext.insert(session)
                     do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
                 }) {
                     Label(step == .contractInput ? "Start Focus Timer" : "Next", systemImage: step == .livesInput ? "checkmark" : "chevron.down")

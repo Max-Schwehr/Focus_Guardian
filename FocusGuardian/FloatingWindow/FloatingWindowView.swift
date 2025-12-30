@@ -44,7 +44,7 @@ struct FloatingWindowView: View {
     // MARK: Camera Logic
     @StateObject var headTracker = CameraManager()
     
-    @EnvironmentObject var blocker: WebsiteBlockerSession
+    @StateObject var blocker: WebsiteBlockerSession = WebsiteBlockerSession()
 
     
     var body: some View {
