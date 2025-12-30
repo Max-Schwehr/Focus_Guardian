@@ -16,7 +16,7 @@ extension FloatingWindowView {
     
     /// Animates resizing an item and updates the host window size accordingly.
     func requestSizeChange(itemToChange: ItemOnScreen, newSize: CGSize) {
-        print("🎉 Request Size Change Filed, for \(itemToChange) with a new size of \(newSize)")
+
         // Get old size
         var oldSize = CGSize()
         switch itemToChange {
@@ -65,9 +65,7 @@ extension FloatingWindowView {
             var totalSize : CGSize = CGSize(width: 0, height: 0)
             totalSize.width = max(timerSizeWidth, menuSize.width, livesSize.width) + outsidePadding*2
             totalSize.height = timerSize.height + menuSize.height + livesSize.height + padding*2 + outsidePadding*2
-            print("Size to be: \(totalSize)")
             resizeMacOSWindow(newSize: totalSize)
-            print("_______________________ \n \n \n")
         }
     }
     
@@ -78,14 +76,8 @@ extension FloatingWindowView {
     
     /// Resizes and repositions the macOS host window to fit all floating content.
     func resizeMacOSWindow(newSize: CGSize) {
-        print("macOSWindowSize.height: \(macOSWindowSize.height)")
-        print("newSize.height: \(newSize.height)")
-        print("newSize.width: \(newSize.width)")
-        
-        print("ATTEMPT TO MOVE MACOS WINDOW, will move with xOffset of \(macOSWindowSize.width - newSize.width)")
         // Move the window position to keep the liquid glass part at the same position
         FloatingMacOSWindowManager.shared.moveWindow(xOffset: macOSWindowSize.width - newSize.width, yOffset: 0)
-        print("DID IT WORK ")
         // Resize the MacOS window
         macOSWindowSize = newSize
     }
@@ -117,7 +109,6 @@ extension FloatingWindowView {
     
     /// Decrements the countdown each second and updates UI when it completes.
     func runCountdownTimer() async {
-        print("Run Countdown Timer")
         while secondsRemaining > 0 || (!isCountingDown) {
             try? await Task.sleep(for: .seconds(1))
             withAnimation {

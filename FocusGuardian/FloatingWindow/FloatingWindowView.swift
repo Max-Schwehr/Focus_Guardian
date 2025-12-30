@@ -44,6 +44,9 @@ struct FloatingWindowView: View {
     // MARK: Camera Logic
     @StateObject var headTracker = CameraManager()
     
+    @StateObject private var blocker = WebsiteBlockerSession()
+
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // MARK: - MacOS window's rectangle, dictating the MacOS window's size
@@ -54,6 +57,7 @@ struct FloatingWindowView: View {
                 .onAppear {
                     refreshActiveSession() // Retrieve the active session from Swift Data
                     headTracker.requestAccessAndConfigure() // Start up camera
+                    blocker.start() // Start the website blocker, if there are any websites to block
                 }
                 .task { await runCountdownTimer() }
                 .onChange(of: requestedLivesSize, { oldValue, newValue in requestSizeChange(itemToChange: .lives, newSize: newValue) })
@@ -93,15 +97,14 @@ struct FloatingWindowView: View {
                             floatingClockViewContentOption = .Clock
                             requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40)) }, onEndSession: {
                                 FloatingMacOSWindowManager.shared.close()
-
+                                blocker.stop()
                             })
                         .border(debugMode ? Color.red : Color.clear)
                         .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                             hideShowMenu(phase: phase)
                         } .animation(standardAnimation, value: timerSize)
                             .onTapGesture {
-                                checkSafari()
-                                checkGoogleChrome()
+                                secondsRemaining = 5
                             }
                     }
                 }
