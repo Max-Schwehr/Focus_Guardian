@@ -10,8 +10,8 @@ import SwiftUI
 struct TimerCompletedView: View {
     @Binding var size : CGSize
     @Binding var isCountingDown : Bool
-    let onAddTime: () -> Void
-    let onEndSession: () -> Void
+    let onAddTimeClicked: () -> Void
+    let onEndSessionClicked: () -> Void
     var body: some View {
         VStack {
             Text("Session Complete!").bold()
@@ -21,7 +21,7 @@ struct TimerCompletedView: View {
             
             HStack {
                 Button {
-                    onAddTime()
+                    onAddTimeClicked()
                 } label: {
                     Label("Add Time", systemImage: "plus.circle")
                         .padding(.horizontal, 20)
@@ -33,7 +33,7 @@ struct TimerCompletedView: View {
                 .buttonStyle(.plain)
                 
                 Button {
-                    onEndSession()
+                    onEndSessionClicked()
                 } label: {
                     Label("End Session", systemImage: "checkmark.circle")
                         .foregroundStyle(.white)
@@ -53,6 +53,6 @@ struct TimerCompletedView: View {
 }
 
 #Preview {
-    TimerCompletedView(size: .constant(CGSize(width: 300, height: 100)), isCountingDown: .constant(true), onAddTime: {}, onEndSession: {})
+    TimerCompletedView(size: .constant(CGSize(width: 300, height: 100)), isCountingDown: .constant(true), onAddTimeClicked: {}, onEndSessionClicked: {})
         .padding()
 }

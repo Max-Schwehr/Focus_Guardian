@@ -44,7 +44,7 @@ struct FloatingWindowView: View {
     // MARK: Camera Logic
     @StateObject var headTracker = CameraManager()
     
-    @StateObject private var blocker = WebsiteBlockerSession()
+    @EnvironmentObject var blocker: WebsiteBlockerSession
 
     
     var body: some View {
@@ -60,6 +60,11 @@ struct FloatingWindowView: View {
                     blocker.start() // Start the website blocker, if there are any websites to block
                 }
                 .task { await runCountdownTimer() }
+                .onChange(of: secondsRemaining, { _, secondsRemaining in
+                    if secondsRemaining == 0 {
+                        blocker.stop()
+                    }
+                })
                 .onChange(of: requestedLivesSize, { oldValue, newValue in requestSizeChange(itemToChange: .lives, newSize: newValue) })
                 .onChange(of: isCountingDown, { _, isCountingDown in
                     if !isCountingDown {
@@ -91,13 +96,12 @@ struct FloatingWindowView: View {
                             .buttonStyle(.plain)
                         }
                         
-                        FloatingClockView(size: $timerSize, secondsRemaining: $secondsRemaining, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize, viewContentOptions: $floatingClockViewContentOption, isCountingDown: $isCountingDown, onAddTime: {
+                        FloatingClockView(size: $timerSize, secondsRemaining: $secondsRemaining, livesLost: $livesLost, requestedLivesSize: $requestedLivesSize, viewContentOptions: $floatingClockViewContentOption, isCountingDown: $isCountingDown, onAddTimeClicked: {
                             isCountingDown = false
                             Task { await runCountdownTimer()}
                             floatingClockViewContentOption = .Clock
-                            requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40)) }, onEndSession: {
+                            requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 100, height: 40)) }, onEndSessionClicked: {
                                 FloatingMacOSWindowManager.shared.close()
-                                blocker.stop()
                             })
                         .border(debugMode ? Color.red : Color.clear)
                         .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
@@ -142,7 +146,9 @@ struct FloatingWindowView: View {
 #Preview("TimerOverlayView") {
     FloatingWindowView()
         .padding()
+        .environmentObject(WebsiteBlockerSession())
 }
 #endif
+
 
 

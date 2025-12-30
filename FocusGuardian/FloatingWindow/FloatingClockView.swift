@@ -8,8 +8,8 @@ struct FloatingClockView: View {
     @Binding var requestedLivesSize : CGSize
     @Binding var viewContentOptions : FloatingClockViewContentOptions
     @Binding var isCountingDown : Bool
-    let onAddTime: () -> Void
-    let onEndSession: () -> Void
+    let onAddTimeClicked: () -> Void
+    let onEndSessionClicked: () -> Void
     var body: some View {
         HStack(spacing: 10) {
             switch viewContentOptions {
@@ -20,7 +20,7 @@ struct FloatingClockView: View {
             case .FaceNotVisible:
                 FaceNotVisible(livesLost: $livesLost, requestedLivesSize: $requestedLivesSize)
             case .TimerCompletedView:
-                TimerCompletedView(size: $size, isCountingDown: $isCountingDown, onAddTime: onAddTime, onEndSession: onEndSession)
+                TimerCompletedView(size: $size, isCountingDown: $isCountingDown, onAddTimeClicked: onAddTimeClicked, onEndSessionClicked: onEndSessionClicked)
             }
         }
         .mask {
@@ -46,7 +46,7 @@ private struct GlassEffectWithVariableCornerRadius: ViewModifier {
 }
 
 #Preview {
-    FloatingClockView(size: .constant(CGSize(width: 200, height: 80)), secondsRemaining: .constant(120), livesLost: .constant(3), requestedLivesSize: .constant(CGSize(width: 250, height: 110)), viewContentOptions: .constant(.Clock), isCountingDown: .constant(true), onAddTime: {}, onEndSession: {})
+    FloatingClockView(size: .constant(CGSize(width: 200, height: 80)), secondsRemaining: .constant(120), livesLost: .constant(3), requestedLivesSize: .constant(CGSize(width: 250, height: 110)), viewContentOptions: .constant(.Clock), isCountingDown: .constant(true), onAddTimeClicked: {}, onEndSessionClicked: {})
         .padding()
 }
 #endif
