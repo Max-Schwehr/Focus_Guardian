@@ -13,7 +13,7 @@ struct WebsiteCell: View {
     var body: some View {
         HStack {
             FaviconView(url: formatURL(url: url, to: .fullURL))
-                .frame(width: 40, height: 40)
+                .frame(width: 20, height: 20)
                 .onAppear {
                     print("FormattedURL: \(formatURL(url: url, to: .fullURL))")
                 }
