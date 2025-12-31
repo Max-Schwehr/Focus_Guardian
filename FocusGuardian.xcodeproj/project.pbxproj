@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		50BB52482F049D2E000C7BCC /* FaviconFinder in Frameworks */ = {isa = PBXBuildFile; productRef = 50BB52472F049D2E000C7BCC /* FaviconFinder */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		506BAE032EA3589000DC060F /* FocusGuardian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusGuardian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50BB52482F049D2E000C7BCC /* FaviconFinder in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = FocusGuardian;
 			packageProductDependencies = (
+				50BB52472F049D2E000C7BCC /* FaviconFinder */,
 			);
 			productName = "KoreanMom Iteration 2";
 			productReference = 506BAE032EA3589000DC060F /* FocusGuardian.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 506BADFA2EA3589000DC060F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				50BB52462F049D2E000C7BCC /* XCRemoteSwiftPackageReference "FaviconFinder" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 506BAE042EA3589000DC060F /* Products */;
 			projectDirPath = "";
@@ -379,6 +388,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		50BB52462F049D2E000C7BCC /* XCRemoteSwiftPackageReference "FaviconFinder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/will-lumley/FaviconFinder.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		50BB52472F049D2E000C7BCC /* FaviconFinder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50BB52462F049D2E000C7BCC /* XCRemoteSwiftPackageReference "FaviconFinder" */;
+			productName = FaviconFinder;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 506BADFB2EA3589000DC060F /* Project object */;
 }

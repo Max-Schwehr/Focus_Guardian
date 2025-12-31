@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-private enum SessionStep: Int, CaseIterable {
+enum SessionStep: Int, CaseIterable {
     case timeInput
     case livesInput
     case contentBlockingInput
@@ -10,7 +10,7 @@ private enum SessionStep: Int, CaseIterable {
 
 struct SessionCreationView: View {
     // MARK: - State previously in SessionOnboardingView
-    @State private var step: SessionStep = .timeInput
+    @State var step: SessionStep = .timeInput
     @State private var isAdvancing: Bool = true
     @State private var isContractValid: Bool? = nil
     @State private var hours : Int = 0

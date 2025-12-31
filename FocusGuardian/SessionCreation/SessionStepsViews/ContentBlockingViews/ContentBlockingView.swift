@@ -9,17 +9,10 @@ import SwiftUI
 
 struct ContentBlockingView: View {
     @State private var showingWebsiteBlocker = true
-    @State private var textField : String = ""
-    @State private var blockedWebsitesLocal = [""] // Need a local version so we can apply `@State` to the view
     var body: some View {
         VStack(spacing: 10) {
             VStack(spacing: 3) {
-                Text("Content Blocking")
-                    .bold()
-                    .font(.title3)
-                
-                Text("Block websites or apps for the duration of your focus!")
-                    .foregroundStyle(.secondary)
+                Text("Chose what content to block:")
                 
                 Picker("", selection: $showingWebsiteBlocker) {
                     Text("Websites")
@@ -31,35 +24,17 @@ struct ContentBlockingView: View {
                 .padding(.top, 5)
                 
                 Divider()
-                    .padding(.top, 8)
+                    .padding(.top, 12)
                     .frame(width: 400)
             }
             .padding(.top, 30)
-            .onDisappear {
-                blockedWebsites = blockedWebsitesLocal // Move these changes to the backend
-            }
             
-            Text("Enter a website to block")
-                .padding(.top, 10)
-                .bold()
+            Spacer()
+
             
-            TextField("example.com", text: $textField)
-                .onSubmit {
-                    blockedWebsitesLocal.append(textField)
-                }
-                .frame(width: 400)
+        WebsiteBlockingView()
             
-            HStack {
-                VStack {
-                    ScrollView {
-                        ForEach(blockedWebsitesLocal, id: \.self) { website in
-                            Text(website)
-                                .padding(.vertical, 3)
-                        }
-                    }
-                }
-            }
-            
+            Spacer()
             
         }
     }
