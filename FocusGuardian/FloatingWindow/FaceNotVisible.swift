@@ -20,7 +20,6 @@ struct FaceNotVisible: View {
         ZStack {
             Label("Face not visible", systemImage: "exclamationmark.triangle")
                 .fontWeight(.medium)
-//                .opacity(pulse ? 1.0 : 0.9)
                 .scaleEffect(pulse ? 1 : 0.95)
                 .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true),
                            value: pulse)
@@ -35,7 +34,7 @@ struct FaceNotVisible: View {
                     expansivePlane
                         .glassEffect(.regular)
                         .mask {
-                            // MARK: Second mask cut off a percent of the red part so it can act as a timer
+                            // MARK: Second mask cut off a percent of the red part so it can n act as a timer
                             GeometryReader { geometry in
                                 Rectangle()
                                     .frame(width: width)
@@ -49,7 +48,7 @@ struct FaceNotVisible: View {
                                                     print("Timer Ended!")
                                                     timerCancellable?.cancel()
                                                     Task {
-                                                        requestedLivesSize = CGSize(width: 250, height: getFloatingHeartsWindowHeight(numberOfHearts: 3)) // MARK: Todo
+                                                        requestedLivesSize = CGSize(width: 250, height: 100)
                                                         try await Task.sleep(for: .seconds(1))
                                                         livesLost += 1
                                                         try await Task.sleep(for: .seconds(1))
@@ -67,7 +66,6 @@ struct FaceNotVisible: View {
                 }
             Label("Face not visible", systemImage: "exclamationmark.triangle")
                 .fontWeight(.medium)
-//                .opacity(pulse ? 1.0 : 0.7)
                 .scaleEffect(pulse ? 1 : 0.95)
                 .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true),
                            value: pulse)

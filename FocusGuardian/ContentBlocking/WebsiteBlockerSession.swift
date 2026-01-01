@@ -69,6 +69,8 @@ final class WebsiteBlockerSession: ObservableObject {
             blockWebsitesOnSafari()
         } else if frontMostAppBundleID == "com.google.Chrome" {
             blockWebsitesOnGoogleChrome()
+        } else if frontMostAppBundleID == "company.thebrowser.Browser" {
+            blockWebsitesOnArc()
         }
     }
 }

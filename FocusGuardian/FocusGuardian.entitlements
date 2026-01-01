@@ -8,6 +8,7 @@
 	<true/>
 	<key>com.apple.security.temporary-exception.apple-events</key>
 	<array>
+		<string>company.thebrowser.Browser</string>
 		<string>com.google.Chrome</string>
 		<string>com.apple.Safari</string>
 	</array>

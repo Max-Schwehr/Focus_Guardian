@@ -32,19 +32,20 @@ struct FloatingLivesView: View {
                 .foregroundStyle(.secondary)
             
             
-                LazyVGrid(columns: columns, spacing: 7) {
-                    ForEach(0..<totalHearts, id: \.self) { index in
+            HStack(spacing: 7) {
+                ForEach(0..<totalHearts, id: \.self) { index in
                     let lost = min(livesLost, totalHearts)
-                        Text(index < lost ? "💔" : "❤️")
-                            .shadow(color: .red.opacity(0.7), radius: 7)
-                    }
+                    Text(index < lost ? "💔" : "❤️")
+                        .shadow(color: .red.opacity(0.7), radius: 7)
                 }
-                .frame(minWidth: 1, minHeight: 1)
-                .padding(.top, 3)
+                Spacer()
+            }
+            .frame(minWidth: 1, minHeight: 1)
+            .padding(.top, 3)
         }
         .padding()
-        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 25))
         .frame(width: size.width, height: size.height)
+        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 25))
         .transition(
             .scale(scale: 0.0, anchor: .topTrailing)
             .combined(with: .opacity)
@@ -57,12 +58,6 @@ struct FloatingLivesView: View {
         )
     }
     
-}
-
-func getFloatingHeartsWindowHeight(numberOfHearts: Int) -> Int {
-    let numberOfRows : Int = Int(ceil(Double(numberOfHearts) / 8))
-    return 100 + numberOfRows * 10
-//    return 300
 }
 
 

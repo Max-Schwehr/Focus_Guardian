@@ -31,10 +31,27 @@ extension WebsiteBlockerSession {
         runAppleScript(script)
     }
     
-    
-    func blockedWebsitesAsAppleScript() -> String {
-        return blockedWebsites .map { "\"\($0)\"" } .joined(separator: ", ")
+    func blockWebsitesOnArc() {
+        let script = """
+        set input to {\(blockedWebsitesAsAppleScript())}
+
+        if application "Arc" is not running then return
+
+        tell application "Arc"
+            if (count of windows) = 0 then return
+        
+            set currentURL to URL of active tab of front window
+        
+            repeat with blockedSite in input
+                if currentURL contains blockedSite then
+                    set URL of active tab of front window to "https://many-slide-999700.framer.app/"
+                end if
+            end repeat
+        end tell
+        """
+        runAppleScript(script)
     }
+    
     
     func blockWebsitesOnGoogleChrome() {
         let script = """
@@ -57,6 +74,10 @@ extension WebsiteBlockerSession {
         end tell
         """
         runAppleScript(script)
+    }
+    
+    func blockedWebsitesAsAppleScript() -> String {
+        return blockedWebsites .map { "\"\($0)\"" } .joined(separator: ", ")
     }
     
     /// `runAppleScript` executes and apple script code given by the first parameter using the input of list.
