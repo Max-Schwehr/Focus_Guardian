@@ -17,6 +17,13 @@ struct AppBlockingView: View {
             GridItem(.adaptive(minimum: 80))
         ]
     @State private var selectedApps : [String] = []
+    @State private var searchText: String = ""
+    
+    private var filteredApps: [AppInfo] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return apps }
+        return apps.filter { $0.name.localizedCaseInsensitiveContains(query) }
+    }
 
     var body: some View {
         VStack {
@@ -25,6 +32,9 @@ struct AppBlockingView: View {
                 .bold()
                 .onAppear {
                     loadApplications()
+                }
+                .onDisappear {
+                    blockedApps = selectedApps
                 }
             HStack(spacing: 4) {
                 Text("Apps must be in the Applications Folder")
@@ -38,11 +48,17 @@ struct AppBlockingView: View {
                             .frame(width: 300)
                     }
             }  .foregroundStyle(.secondary)
-                
+            
+            HStack {
+                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+                TextField("Search apps", text: $searchText)
+                    .textFieldStyle(.roundedBorder)
+            }
+            .padding(.horizontal)
 
             ScrollView {
                 LazyVGrid(columns: adaptiveColumn, spacing: 10) {
-                    ForEach (apps) { app in
+                    ForEach (filteredApps) { app in
                         let idOrPath = app.bundleID ?? app.url.path
                         AppCell(
                             isSelected: Binding<Bool>(

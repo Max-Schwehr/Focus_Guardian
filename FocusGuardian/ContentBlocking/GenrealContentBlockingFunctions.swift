@@ -10,7 +10,7 @@ import AppKit
 
 // This is also used in the views
 var blockedWebsites : [String] = []
-var blockedApps : [String] = ["Word", "Photos", "Discord", "Messages"]
+var blockedApps : [String] = []
 
 
 

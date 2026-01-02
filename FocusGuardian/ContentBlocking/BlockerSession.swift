@@ -73,8 +73,8 @@ final class BlockerSession: ObservableObject {
     }
     
     func runAppBlocker() {
-        guard let frontMostAppName = getFrontMostApp().name else { return }
-        if blockedApps.contains(frontMostAppName) {
+        guard let frontMostAppBundleID = getFrontMostApp().bundleID else { return }
+        if blockedApps.contains(frontMostAppBundleID    ) {
             hideFrontMostApp()
         }
     }
