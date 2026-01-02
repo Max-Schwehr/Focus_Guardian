@@ -15,7 +15,7 @@ var blockedWebsites : [String] = []
 
 
 @MainActor
-final class WebsiteBlockerSession: ObservableObject {
+final class BlockerSession: ObservableObject {
 
     @Published private(set) var isRunning: Bool = false
 
@@ -34,6 +34,7 @@ final class WebsiteBlockerSession: ObservableObject {
             Task { @MainActor in
                 guard self.isRunning else { return }
                 self.runWebsiteBlocker()
+                hideDiscord()
             }
         }
 
@@ -56,11 +57,6 @@ final class WebsiteBlockerSession: ObservableObject {
     }
 
     // MARK: - Identify which app to block
-
-    func getFrontMostApp() -> (name: String?, bundleID: String?) {
-        let app = NSWorkspace.shared.frontmostApplication
-        return (app?.localizedName, app?.bundleIdentifier)
-    }
 
     func runWebsiteBlocker() {
         guard let frontMostAppBundleID = getFrontMostApp().bundleID else { return }
