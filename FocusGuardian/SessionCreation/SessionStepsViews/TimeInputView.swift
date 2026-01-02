@@ -83,6 +83,11 @@ struct TimeInputView: View {
                 Text("Enter Focus Length")
                     .bold()
                     .font(.title3)
+                    .onTapGesture {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+                            print("Quit Discord Called")
+                        }
+                    }
                 
                 Text("Hours and Minutes")
                     .foregroundStyle(.secondary)

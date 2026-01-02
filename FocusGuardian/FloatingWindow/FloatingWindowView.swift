@@ -44,7 +44,7 @@ struct FloatingWindowView: View {
     // MARK: Camera Logic
     @StateObject var headTracker = CameraManager()
     
-    @StateObject var blocker: WebsiteBlockerSession = WebsiteBlockerSession()
+    @StateObject var blocker: BlockerSession = BlockerSession()
 
     
     var body: some View {
@@ -146,7 +146,7 @@ struct FloatingWindowView: View {
 #Preview("TimerOverlayView") {
     FloatingWindowView()
         .padding()
-        .environmentObject(WebsiteBlockerSession())
+        .environmentObject(BlockerSession())
 }
 #endif
 

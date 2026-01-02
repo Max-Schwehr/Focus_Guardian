@@ -31,8 +31,11 @@ struct ContentBlockingView: View {
             
             Spacer()
 
-            
-        WebsiteBlockingView()
+            if showingWebsiteBlocker {
+                WebsiteBlockingView()
+            } else {
+                AppBlockingView()
+            }
             
             Spacer()
             

@@ -41,6 +41,13 @@ final class AppDiscoveryService {
             for case let url as URL in enumerator {
                 // Only consider directories ending with .app
                 guard url.pathExtension == "app" else { continue }
+                
+                // Exclude Safari browser extensions packaged inside Safari.app
+                let path = url.path
+                if path.contains("Safari.app/Contents/PlugIns/") {
+                    continue
+                }
+                
                 // Skip if URL is already processed
                 if seenPaths.contains(url) { continue }
                 
@@ -66,6 +73,11 @@ final class AppDiscoveryService {
                     bundle.object(forInfoDictionaryKey: "CFBundleName") as? String ??
                     url.deletingPathExtension().lastPathComponent
                 
+                // Skip items with no name or blank/whitespace-only names
+                if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    continue
+                }
+                
                 // Add app info
                 apps.append(AppInfo(id: UUID(), url: url, name: name, bundleID: bundleID))
                 seenPaths.insert(url)
@@ -76,3 +88,4 @@ final class AppDiscoveryService {
         return apps.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 }
+
