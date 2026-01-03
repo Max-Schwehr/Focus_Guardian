@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-// Focus for each digit field
+/// Identifies which single-character digit field currently has focus.
 private enum CurrentDigitFocus: Hashable {
     case hourDigit1
     case minuteDigit1
@@ -31,49 +31,6 @@ struct TimeInputView: View {
 
     @FocusState private var currentFocus: CurrentDigitFocus?
 
-    // MARK: - Helpers
-    private func advanceFocusIfNeeded() {
-        switch currentFocus {
-        case .hourDigit1:
-            if hourDigit1.count == 1 { currentFocus = .minuteDigit1 }
-        case .minuteDigit1:
-            if minuteDigit1.count == 1 { currentFocus = .minuteDigit2 }
-        case .minuteDigit2:
-            if minuteDigit2.count == 1 {
-                currentFocus = nil
-                if allFieldsFilled {
-                    withAnimation(.spring) {
-                        updateBindingsFromInput()
-                    }
-                }
-            }
-        case .none:
-            break
-        }
-    }
-
-    private func computeOutput() -> (hour: Int, minute: Int, lives: Int)? {
-        guard
-            let h = Int(hourDigit1),
-            let m1 = Int(minuteDigit1),
-            let m2 = Int(minuteDigit2)
-        else { return nil }
-
-        let minuteValue = m1 * 10 + m2
-        guard (0...59).contains(minuteValue) else { return nil }
-
-        let totalMinutes = h * 60 + minuteValue
-        let lives = max(1, (totalMinutes / 8) + 1)
-        return (h, minuteValue, lives)
-    }
-
-    func updateBindingsFromInput() {
-        if let computed = computeOutput() {
-            hours = computed.hour
-            minutes = computed.minute
-            lives = computed.lives
-        }
-    }
 
     // MARK: - Body
 
@@ -83,12 +40,7 @@ struct TimeInputView: View {
                 Text("Enter Focus Length")
                     .bold()
                     .font(.title3)
-                    .onTapGesture {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
-                            print("Quit Discord Called")
-                        }
-                    }
-                
+
                 Text("Hours and Minutes")
                     .foregroundStyle(.secondary)
                 
@@ -108,7 +60,7 @@ struct TimeInputView: View {
                         let sanitized = sanitizeToSingleDigit(newValue)
                         let sanitizedString = String(sanitized)
                         if sanitizedString != hourDigit1 { hourDigit1 = sanitizedString }
-                        advanceFocusIfNeeded()
+                        advanceFocusIfTextboxFilled()
                     }
                     .submitLabel(.next)
                 
@@ -121,7 +73,7 @@ struct TimeInputView: View {
                         let sanitized = sanitizeToSingleDigit(newValue)
                         let sanitizedString = String(sanitized)
                         if sanitizedString != minuteDigit1 { minuteDigit1 = sanitizedString }
-                        advanceFocusIfNeeded()
+                        advanceFocusIfTextboxFilled()
                     }
                     .submitLabel(.next)
                 
@@ -131,7 +83,7 @@ struct TimeInputView: View {
                         let sanitized = sanitizeToSingleDigit(newValue)
                         let sanitizedString = String(sanitized)
                         if sanitizedString != minuteDigit2 { minuteDigit2 = sanitizedString }
-                        advanceFocusIfNeeded()
+                        advanceFocusIfTextboxFilled()
                     }
                     .submitLabel(.done)
             }
@@ -149,11 +101,99 @@ struct TimeInputView: View {
                     lives = 0
                 }
             }
-        }
+            .onKeyPress { kp in
+                switch kp.key {
+                case .leftArrow:
+                    retreatFocus()
+                    return .handled
+
+                case .rightArrow:
+                    advanceFocus()
+                    return .handled
+                default:
+                    return .ignored
+                }
+            }        }
         .onDisappear {
             updateBindingsFromInput()
         }
     }
+    
+    /// Advances focus to the next field when the current one has a single character.
+    /// When the last field is filled and all fields are valid, updates bound values.
+    private func advanceFocusIfTextboxFilled() {
+        switch currentFocus {
+        case .hourDigit1:
+            if hourDigit1.count == 1 { currentFocus = .minuteDigit1 }
+        case .minuteDigit1:
+            if minuteDigit1.count == 1 { currentFocus = .minuteDigit2 }
+        case .minuteDigit2:
+            if minuteDigit2.count == 1 {
+                if allFieldsFilled {
+                    withAnimation(.spring) {
+                        updateBindingsFromInput()
+                    }
+                }
+            }
+        case .none:
+            break
+        }
+    }
+
+    /// Moves focus one field to the right, if possible.
+    private func advanceFocus() {
+        switch currentFocus {
+        case .hourDigit1:
+            currentFocus = .minuteDigit1
+        case .minuteDigit1:
+            currentFocus = .minuteDigit2
+        case .minuteDigit2:
+            break
+        case .none:
+            break
+        }
+    }
+    
+    /// Moves focus one field to the left, if possible.
+    private func retreatFocus() {
+        switch currentFocus {
+        case .hourDigit1:
+            break
+        case .minuteDigit1:
+            currentFocus = .hourDigit1
+        case .minuteDigit2:
+            currentFocus = .minuteDigit1
+        case .none:
+            break
+        }
+    }
+
+    /// Computes hour, minute, and derived lives from the three digit fields.
+    /// Returns `nil` if any field is invalid or minutes are out of range (0...59).
+    private func computeOutput() -> (hour: Int, minute: Int, lives: Int)? {
+        guard
+            let h = Int(hourDigit1),
+            let m1 = Int(minuteDigit1),
+            let m2 = Int(minuteDigit2)
+        else { return nil }
+
+        let minuteValue = m1 * 10 + m2
+        guard (0...59).contains(minuteValue) else { return nil }
+
+        let totalMinutes = h * 60 + minuteValue
+        let lives = max(1, (totalMinutes / 10   ) + 1)
+        return (h, minuteValue, lives)
+    }
+
+    /// Updates the bound `hours`, `minutes`, and `lives` from current input if valid.
+    func updateBindingsFromInput() {
+        if let computed = computeOutput() {
+            hours = computed.hour
+            minutes = computed.minute
+            lives = computed.lives
+        }
+    }
+
 }
 
 #Preview {

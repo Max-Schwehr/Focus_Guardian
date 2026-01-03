@@ -35,6 +35,7 @@ struct SessionCreationView: View {
                         .transition(transitionForCurrentDirection())
                 case .contentBlockingInput:
                     ContentBlockingView()
+                        .transition(transitionForCurrentDirection())
                 case .livesInput:
                     LivesInputView(lives: $lives)
                         .transition(transitionForCurrentDirection())
@@ -65,44 +66,64 @@ struct SessionCreationView: View {
             }
 
             // Navigation buttons
-            HStack(spacing: 12) {
-                Button(action: goBack) {
-                    Label("Back", systemImage: "chevron.up")
-                        .labelStyle(.titleAndIcon)
-                        .font(.headline)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            VStack {
+                HStack(alignment: .bottom, spacing: 12) {
+                    VStack {
+                        if previousStep(from: step) != nil {
+                            HStack (spacing: 0) {
+                                Image(systemName: "chevron.left.square.fill")
+                                Text(" + ")
+                                Image(systemName: "command")
+                            }
+                            .font(.caption2)
+                            .opacity(0.3)
+                        }
+                        
+                        
+                        Button(action: goBack) {
+                            Label("Back", systemImage: "chevron.up")
+                                .labelStyle(.titleAndIcon)
+                                .font(.headline)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .glassEffect()
+                        .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+                        .disabled(previousStep(from: step) == nil)
+                        .keyboardShortcut(.leftArrow, modifiers: [.command])
+
+                    }
+                    Spacer()
+                    VStack {
+                        HStack(spacing: 0) {
+                            Image(systemName: "command")
+                            Text(" + ")
+                            Image(systemName: "chevron.right.square.fill")
+                        }
+                        .font(.caption2)
+                        .opacity(0.3)
+                        
+                        Button(action: {
+                            goNext()
+                            do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
+                        }) {
+                            Label(step == .contractInput ? "Start Focus Timer" : "Next", systemImage: step == .livesInput ? "checkmark" : "chevron.down")
+                                .labelStyle(.titleAndIcon)
+                                .font(.headline)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.white)
+                        .glassEffect(.regular.tint(.blue))
+                        .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+                        .keyboardShortcut(.rightArrow, modifiers: [.command])
+                        .disabled(step == .contractInput && isContractValid != true)
+                    }
                 }
-                .buttonStyle(.plain)
-                .glassEffect()
-                .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
-                .disabled(previousStep(from: step) == nil)
-
-                Spacer()
-
-                Button(action: {
-                    // If you want to advance through steps, call goNext()
-                     goNext()
-
-                    // Current behavior (from SessionOnboardingView): create a dummy session immediately
-//                    let session = FocusSession(targetLength: 120, completed: false, date: Date(), totalLivesCount: 5)
-//                    modelContext.insert(session)
-                    do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
-                }) {
-                    Label(step == .contractInput ? "Start Focus Timer" : "Next", systemImage: step == .livesInput ? "checkmark" : "chevron.down")
-                        .labelStyle(.titleAndIcon)
-                        .font(.headline)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.white)
-                .glassEffect(.regular.tint(.blue))
-                .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
-                .keyboardShortcut(.defaultAction)
-                .disabled(step == .contractInput && isContractValid != true)
             }
         }
         .padding()

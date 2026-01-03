@@ -12,16 +12,10 @@ struct ContentBlockingView: View {
     var body: some View {
         VStack(spacing: 10) {
             VStack(spacing: 3) {
-                Text("Chose what content to block:")
                 
-                Picker("", selection: $showingWebsiteBlocker) {
-                    Text("Websites")
-                        .tag(true)
-                    Text("Apps")
-                        .tag(false)
-                }
-                .pickerStyle(.segmented)
-                .padding(.top, 5)
+                GlassSegmentedPicker(isWebSelected: $showingWebsiteBlocker)
+                    .frame(height: 30)
+                    .padding(.top, 5)
                 
                 Divider()
                     .padding(.top, 12)
@@ -48,3 +42,4 @@ struct ContentBlockingView: View {
         .padding()
         .background(Color.gray.opacity(0.1))
 }
+
