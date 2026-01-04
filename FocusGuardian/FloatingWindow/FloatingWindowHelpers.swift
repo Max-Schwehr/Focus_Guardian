@@ -86,8 +86,8 @@ extension FloatingWindowView {
     func refreshActiveSession() {
         do {
             activeSession = try getMostRecentFocusSession(list: sessions)
-            print("Refreshed most recent focus session: Date = \(String(describing: activeSession?.date)) Length = \(String(describing: activeSession?.targetLength))")
-            secondsRemaining = (activeSession?.targetLength ?? 0) * 60
+//            print("Refreshed most recent focus session: Date = \(String(describing: activeSession?.date)) Length = \(String(describing: activeSession?.targetLength))")
+            secondsRemaining = (activeSession?.sections[0].length ?? 0) * 60
         } catch {
             print("No active session available or error: \(error)")
         }
@@ -123,7 +123,7 @@ extension FloatingWindowView {
                 withAnimation {
                     requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 300, height: 123))
                 }
-                activeSession?.completed = true
+//                activeSession?.sections[0]. = true
                 headTracker.stop() // Turn off the users camera
             }
         }

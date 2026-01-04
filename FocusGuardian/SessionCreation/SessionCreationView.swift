@@ -139,7 +139,8 @@ struct SessionCreationView: View {
     private func goNext() {
         if step == .contractInput {
             // Finalize and create a session based on inputs
-            let session = FocusSession(targetLength: hours * 60 + minutes, completed: false, date: Date(), totalLivesCount: lives)
+//            let session = FocusSession(targetLength: hours * 60 + minutes, completed: false, date: Date(), totalLivesCount: lives)
+            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives, problemOccurred: false, sections: [FocusSection(length: hours * 60 + minutes, isFocusSection: true)])
             modelContext.insert(session)
             do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
         } else if let next = nextStep(from: step) {

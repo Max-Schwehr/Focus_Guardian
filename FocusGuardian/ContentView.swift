@@ -15,7 +15,7 @@ struct ContentView: View {
     }
 
     @State private var path = NavigationPath()
-    @State private var selection: Route = .home
+    @State var selection: Route = .home
 
    
     var body: some View {

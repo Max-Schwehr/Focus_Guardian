@@ -14,7 +14,7 @@ struct FloatingMenuView: View {
                     .bold()
                 VStack(alignment: .leading, spacing: 7) {
                     Text("Remaining: \(secondsToPresentableTime(seconds: secondsRemaining, showSeconds: true))")
-                    Text("Elapsed: \(secondsToPresentableTime(seconds: (activeSession?.targetLength ?? 0) * 60 - secondsRemaining, showSeconds: true))")
+                    Text("Elapsed: ")
                     Text("Lives Used: 2 out of 4")
                 }
                 Spacer()
@@ -45,8 +45,8 @@ struct BlurModifier: ViewModifier {
     }
 }
 
-#Preview {
-    FloatingMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: .constant(10), activeSession: .constant(FocusSession(targetLength: 120, completed: false, date: Date(), totalLivesCount: 5)))
-        .offset(x: 10, y: -50)
-}
+//#Preview {
+//    FloatingMenuView(size: CGSize(width: 250, height: 120), secondsRemaining: .constant(10), activeSession: .constant(FocusSession(targetLength: 120, completed: false, date: Date(), totalLivesCount: 5)))
+//        .offset(x: 10, y: -50)
+//}
 #endif
