@@ -1,6 +1,6 @@
 import Foundation
 
-public let sampleFocusSessions: [FocusSession] = [
+let sampleFocusSessions: [FocusSession] = [
     FocusSession(
         completedLength: 130,
         date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(),

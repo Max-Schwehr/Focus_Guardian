@@ -16,68 +16,79 @@ struct SessionCell: View {
     var session: FocusSession
     @State private var completionDetails: (isSessionCompleted: Bool, extraMinutesCompleted: Int)
     
+    
+    private func displaySectionRows() -> Bool {
+        return session.sections.count > 1 || completionDetails.extraMinutesCompleted > 0
+    }
+    
+    
     var body: some View {
-        
-        
         HStack {
             if session.sections.isEmpty {
+                // MARK: -  Error case
+                // Happens if the session object does not have any sections within it.
+                
                 Spacer()
                 Text("Could not display session information")
                 Spacer()
             } else {
+                // MARK: - Normal Cell
                 VStack(alignment: .leading, spacing: 4) {
+                    // Title
                     Text("Session on \(formatDateToDayOfWeek(date: session.date))")
                         .bold()
-                    if (session.sections.count > 1 || completionDetails.extraMinutesCompleted > 0) {
-                        Text("Total Time Spent Working: \(secondsToPresentableTime(seconds: session.completedLength * 60, showSeconds: false))")
+ 
+                    // If there are multiple sections, find the total time the user spent working
+                    if displaySectionRows() {
+                        Text("Total Time You Spent Working: \(secondsToPresentableTime(seconds: session.completedLength * 60, showSeconds: false))")
                     }
                     
+                    // Total Hearts Used
                     Text("Total Hearts Used: 2 out of 3 ")
                     
+                    // Session Completion Status
                     HStack(spacing: 4) {
                         Text(completionDetails.isSessionCompleted ? "Session Completed" : "Session Not Completed")
+                        
                         Image(systemName: completionDetails.isSessionCompleted ? "checkmark" : "xmark")
+                        Spacer() // Push's cell to take up the max width possible
                     }
-                    .padding(.bottom, 8)
                     
-                    Divider()
+                    // MARK: Section Cells
+//                    if displaySectionRows() {
+                        Divider()
+                            .padding(.vertical, 4)
+//                    }
                     
-                    
-                    if session.sections.count > 1 || completionDetails.extraMinutesCompleted > 0 {
+                    VStack(alignment: .leading, spacing: 10) {
                         
                         Text("Session Schedule:")
                             .fontWeight(.medium)
-                            .padding(.bottom, 4)
                         
-                        VStack(spacing: 10) {
-                            ForEach(Array(session.sections.enumerated()), id: \.offset) { index, section in
-                                SessionRow(
-                                    systemImage: section.isFocusSection ? "briefcase" : "bed.double",
-                                    title: section.isFocusSection ? "Work:" : "Break:",
-                                    timeText: secondsToPresentableTime(seconds: section.length * 60, showSeconds: false)
-                                )
-                            }
-                            
-                            if completionDetails.extraMinutesCompleted > 0 {
-                                
-                                SessionRow(
-                                    systemImage: "ellipsis.circle",
-                                    title: "Add-on",
-                                    timeText: secondsToPresentableTime(seconds: completionDetails.extraMinutesCompleted * 60, showSeconds: false)
-                                )
-                            }
+                        // List of Section Cells
+                        ForEach(Array(session.sections.enumerated()), id: \.offset) { index, section in
+                            SectionCell(
+                                systemImage: section.isFocusSection ? "briefcase" : "bed.double",
+                                title: section.isFocusSection ? "Work:" : "Break:",
+                                timeText: secondsToPresentableTime(seconds: section.length * 60, showSeconds: false)
+                            )
+                        }
+                        
+                        // Display a section cell describing extra time the user worked, assuming the user worked extra time
+                        if completionDetails.extraMinutesCompleted > 0 {
+                            SectionCell(
+                                systemImage: "ellipsis.circle",
+                                title: "Add-on",
+                                timeText: secondsToPresentableTime(seconds: completionDetails.extraMinutesCompleted * 60, showSeconds: false)
+                            )
                         }
                     }
                     
-                    if !(session.sections.count > 1 || completionDetails.extraMinutesCompleted > 0) {
-                        Text("\(secondsToPresentableTime(seconds: session.completedLength * 60, showSeconds: false)) completed out of \(secondsToPresentableTime(seconds: session.sections[0].length * 60, showSeconds: false))")
-                            .fontWeight(.medium)
-                    }
                 }
             }
         }
         .padding()
-        .glassEffect(.regular.tint(completionDetails.isSessionCompleted ? Color.green.opacity(0.05) : Color.red.opacity(0.05)), in: .rect(cornerRadius: 15))
+        .glassEffect(.regular.tint(completionDetails.isSessionCompleted ? Color.green.opacity(0.02) : Color.red.opacity(0.02)), in: .rect(cornerRadius: 15))
     }
 }
 

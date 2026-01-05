@@ -9,7 +9,10 @@ import SwiftUI
 
 
 struct WeekPicker: View {
-    @State private var selectedDate: Date = Date()
+    @State private var selectedDate: Date = Date() // Represents the date to find the Monday and Sunday of, and is changed by the left and right chevrons.
+    
+    @Binding var startDate: Date
+    @Binding var endDate: Date
     
     var body: some View {
         HStack() {
@@ -51,11 +54,43 @@ struct WeekPicker: View {
             .buttonStyle(.plain)
             .glassEffect(.regular)
         }
+        .onAppear {
+            updateBindingVariables()
+        }
+        .onChange(of: selectedDate) { oldValue, newValue in
+            updateBindingVariables()
+        }
+    }
+    
+    private func updateBindingVariables() {
+        guard let weekBoundsInfo : (monday: Date, sunday: Date) = weekBounds(containing: selectedDate) else {return }
+        startDate = weekBoundsInfo.monday
+        endDate = weekBoundsInfo.sunday
+    }
+    
+    
+    private func weekBounds(containing date: Date, calendar: Calendar = .mondayFirst) -> (monday: Date, sunday: Date)? {
+        guard let monday = calendar.dateInterval(of: .weekOfYear, for: date)?.start,
+              let sunday = calendar.date(byAdding: .day, value: 6, to: monday) else {
+            return nil
+        }
+        return (monday, sunday)
+    }
+
+    private func weekLabel(for date: Date, calendar: Calendar = .mondayFirst) -> String {
+        guard let (monday, sunday) = weekBounds(containing: date, calendar: calendar) else { return "" }
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = .current
+        formatter.setLocalizedDateFormatFromTemplate("MMM d")
+        let start = formatter.string(from: monday)
+        let end = formatter.string(from: sunday)
+        return "\(start) – \(end)"
     }
 }
 
 #Preview {
-    WeekPicker()
+    WeekPicker(startDate: .constant(Date()), endDate: .constant(Date()))
 }
 
 extension Calendar {
@@ -67,21 +102,3 @@ extension Calendar {
     }()
 }
 
-private func weekBounds(containing date: Date, calendar: Calendar = .mondayFirst) -> (monday: Date, sunday: Date)? {
-    guard let monday = calendar.dateInterval(of: .weekOfYear, for: date)?.start,
-          let sunday = calendar.date(byAdding: .day, value: 6, to: monday) else {
-        return nil
-    }
-    return (monday, sunday)
-}
-
-private func weekLabel(for date: Date, calendar: Calendar = .mondayFirst) -> String {
-    guard let (monday, sunday) = weekBounds(containing: date, calendar: calendar) else { return "" }
-    let formatter = DateFormatter()
-    formatter.calendar = calendar
-    formatter.locale = .current
-    formatter.setLocalizedDateFormatFromTemplate("MMM d")
-    let start = formatter.string(from: monday)
-    let end = formatter.string(from: sunday)
-    return "\(start) – \(end)"
-}
