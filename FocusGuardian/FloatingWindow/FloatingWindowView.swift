@@ -30,9 +30,7 @@ struct FloatingWindowView: View {
     let expandedMenuSize = CGSize(width: 260, height: 120)
     let outsidePadding : CGFloat = 10
     let debugMode = false
-    
-    // Size of the timer liquid glass
-    
+        
     // Lives information
     @State private var livesLost = 0
     
@@ -46,6 +44,7 @@ struct FloatingWindowView: View {
     
     @StateObject var blocker: BlockerSession = BlockerSession()
 
+    @State var sectionNumber = 0
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -63,6 +62,7 @@ struct FloatingWindowView: View {
                 .onChange(of: secondsRemaining, { _, secondsRemaining in
                     if secondsRemaining == 0 {
                         blocker.stop()
+                        
                     }
                 })
                 .onChange(of: requestedLivesSize, { oldValue, newValue in requestSizeChange(itemToChange: .lives, newSize: newValue) })
@@ -79,7 +79,6 @@ struct FloatingWindowView: View {
                 })
                 .onChange(of: headTracker.hasFace) { _, hasFace in handleFaceDetectionChange(hasFace) }
                 .border(debugMode ? .black : .clear)
-//                .glassEffect(.regular.tint(.blue))
             
             VStack(alignment: .trailing, spacing: padding) {
                 // MARK: - Floating Liquid Glass Timer
@@ -104,12 +103,10 @@ struct FloatingWindowView: View {
                                 FloatingMacOSWindowManager.shared.close()
                             })
                         .border(debugMode ? Color.red : Color.clear)
+                        .animation(standardAnimation, value: timerSize)
                         .onContinuousHover { phase in // SHOULD OPEN CLOSE MENU
                             hideShowMenu(phase: phase)
-                        } .animation(standardAnimation, value: timerSize)
-                            .onTapGesture {
-                                secondsRemaining = 5
-                            }
+                        }
                     }
                 }
                 .frame(width: showStopButton ? timerSize.width + 50 : timerSize.width) // Add width for the stop button if it is there
@@ -136,7 +133,7 @@ struct FloatingWindowView: View {
                 
                 Spacer()
 
-            }                    .border(debugMode ? Color.green : Color.clear).frame(height: macOSWindowSize.height)
+            }     .border(debugMode ? Color.green : Color.clear).frame(height: macOSWindowSize.height)
 
             
         }        

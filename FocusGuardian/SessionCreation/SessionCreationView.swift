@@ -68,6 +68,7 @@ struct SessionCreationView: View {
             // Navigation buttons
             VStack {
                 HStack(alignment: .bottom, spacing: 12) {
+                    // MARK: - Back Button
                     VStack {
                         if previousStep(from: step) != nil {
                             HStack (spacing: 0) {
@@ -96,6 +97,7 @@ struct SessionCreationView: View {
 
                     }
                     Spacer()
+                    // MARK: - Next / Complete Button
                     VStack {
                         HStack(spacing: 0) {
                             Image(systemName: "command")
@@ -139,9 +141,18 @@ struct SessionCreationView: View {
     private func goNext() {
         if step == .contractInput {
             // Finalize and create a session based on inputs
-//            let session = FocusSession(targetLength: hours * 60 + minutes, completed: false, date: Date(), totalLivesCount: lives)
-            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives, problemOccurred: false, sections: [FocusSection(length: hours * 60 + minutes, isFocusSection: true)])
+            
+            // MARK: This code is the real app code that has been commented out of testing
+//            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives, problemOccurred: false, sections: [FocusSection(length: hours * 60 + minutes, isFocusSection: true)])
+            //            modelContext.insert(session)
+
+            // MARK: Testing code
+            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: 3, problemOccurred: false, sections: [
+                FocusSection(length: 1, isFocusSection: true),
+                FocusSection(length: 1, isFocusSection: true)
+            ])
             modelContext.insert(session)
+            
             do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
         } else if let next = nextStep(from: step) {
             isAdvancing = true

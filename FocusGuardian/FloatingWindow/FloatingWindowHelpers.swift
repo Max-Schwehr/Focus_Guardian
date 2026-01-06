@@ -86,8 +86,7 @@ extension FloatingWindowView {
     func refreshActiveSession() {
         do {
             activeSession = try getMostRecentFocusSession(list: sessions)
-//            print("Refreshed most recent focus session: Date = \(String(describing: activeSession?.date)) Length = \(String(describing: activeSession?.targetLength))")
-            secondsRemaining = (activeSession?.sections[0].length ?? 0) * 60
+            secondsRemaining = (activeSession?.sections[sectionNumber].length ?? 0) * 60
         } catch {
             print("No active session available or error: \(error)")
         }
@@ -109,8 +108,9 @@ extension FloatingWindowView {
     
     /// Decrements the countdown each second and updates UI when it completes.
     func runCountdownTimer() async {
+        print("RunCountdownTimer: has reported that secondsRemaining is: \(secondsRemaining) and isCountingDown is \(isCountingDown)")
         while secondsRemaining > 0 || (!isCountingDown) {
-            try? await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: .seconds(0.2)) // NOTE: THIS HAS BEEN CHANGED FOR FASTER TESTING
             withAnimation {
                 if isCountingDown {
                     secondsRemaining -= 1
@@ -118,15 +118,36 @@ extension FloatingWindowView {
                     secondsRemaining += 1
                 }
             }
+            
             if secondsRemaining <= 0 {
-                floatingClockViewContentOption = .TimerCompletedView
-                withAnimation {
-                    requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 300, height: 123))
+                let isMoreSections = checkForNextFocusSection()
+                print("checkForNextFocusSection was ran and returned: \(isMoreSections)")
+                if isMoreSections == false {
+                    floatingClockViewContentOption = .TimerCompletedView
+                    withAnimation {
+                        requestSizeChange(itemToChange: .timer, newSize: CGSize(width: 300, height: 123))
+                    }
+                    headTracker.stop() // Turn off the users camera
                 }
-//                activeSession?.sections[0]. = true
-                headTracker.stop() // Turn off the users camera
             }
         }
+    }
+    
+    /// If the timer hits zero, this can detect if there is a focus section after, and reset the timer if so
+    func checkForNextFocusSection() -> Bool {
+        guard let numberOfSections = activeSession?.sections.count else { return false }
+        print("NumberOfSections = \(numberOfSections), and sectionNumber = \(sectionNumber)")
+        if !((numberOfSections - 1) > sectionNumber) {
+            return false // There are no more sections
+        }
+        
+        // From here on, we know there is another section, thus the timer must continue
+        sectionNumber += 1 // Increment Section Number
+        Task {
+            secondsRemaining = (activeSession?.sections[sectionNumber].length ?? 0) * 60 // Set the timer to the new length
+            await runCountdownTimer() // Run the countdown timer with the new length
+        }
+        return true
     }
     
     /// Updates timer state and size based on whether a face is detected.

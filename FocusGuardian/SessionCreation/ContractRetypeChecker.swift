@@ -35,7 +35,8 @@ Text 2: "\(phraseTyped)"
             to: prompt,
             generating: ContractFeedBackOutput.self
         )
-        return response.content.isValid
+//        return response.content.isValid
+        return true
     } catch {
         // If the AI model errors, treat as valid per request
         print("isValidRetype error: \(error). Defaulting to true.")
