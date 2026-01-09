@@ -13,9 +13,8 @@ struct SessionCreationView: View {
     @State var step: SessionStep = .timeInput
     @State private var isAdvancing: Bool = true
     @State private var isContractValid: Bool? = nil
-    @State private var hours : Int = 0
-    @State private var minutes : Int = 0
     @State private var lives : Int = 0
+    @State private var sections : [FocusSection] = []
 
     @Query var sessions: [FocusSession]
     @Environment(\.modelContext) var modelContext
@@ -31,7 +30,7 @@ struct SessionCreationView: View {
             ZStack {
                 switch step {
                 case .timeInput:
-                    TimeInputView(hours: $hours, minutes: $minutes, lives: $lives)
+                    TimeInputView(lives: $lives, sections: $sections)
                         .transition(transitionForCurrentDirection())
                 case .contentBlockingInput:
                     ContentBlockingView()
@@ -70,6 +69,7 @@ struct SessionCreationView: View {
                 HStack(alignment: .bottom, spacing: 12) {
                     // MARK: - Back Button
                     VStack {
+                        // Text showing the keyboard shortcut to trigger the button
                         if previousStep(from: step) != nil {
                             HStack (spacing: 0) {
                                 Image(systemName: "chevron.left.square.fill")
@@ -80,7 +80,7 @@ struct SessionCreationView: View {
                             .opacity(0.3)
                         }
                         
-                        
+                        // Back Button
                         Button(action: goBack) {
                             Label("Back", systemImage: "chevron.up")
                                 .labelStyle(.titleAndIcon)
@@ -97,8 +97,10 @@ struct SessionCreationView: View {
 
                     }
                     Spacer()
+                    
                     // MARK: - Next / Complete Button
                     VStack {
+                        // Text showing the keyboard shortcut to trigger the button
                         HStack(spacing: 0) {
                             Image(systemName: "command")
                             Text(" + ")
@@ -107,6 +109,7 @@ struct SessionCreationView: View {
                         .font(.caption2)
                         .opacity(0.3)
                         
+                        // Next Button
                         Button(action: {
                             goNext()
                             do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
