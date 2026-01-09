@@ -10,7 +10,6 @@ import SwiftUI
 
 
 struct TimeInputBoxes: View {
-    
     // Bindings for output values
     @Binding var hours: Int
     @Binding var minutes: Int
@@ -93,9 +92,7 @@ struct TimeInputBoxes: View {
     .onDisappear {
         updateBindingsFromInput()
     }
-
     }
-
 }
 
 #Preview {

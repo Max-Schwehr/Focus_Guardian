@@ -12,8 +12,14 @@ struct TimeInputSectionCell: View {
     var minutes : Int
     var body: some View {
         VStack(spacing: -1) {
-            Text(secondsToPresentableTime(seconds: minutes * 60, showSeconds: false))
-                .fontWeight(.medium)
+            if minutes > 0 {
+                Text(secondsToPresentableTime(seconds: minutes * 60, showSeconds: false))
+                    .fontWeight(.medium)
+            } else {
+                Text("Click to set time")
+                    .fontWeight(.medium)
+            }
+    
             Text(isFocusSection ? "Work" : "Break")
                 .font(.caption2)
                 .foregroundStyle(.secondary)

@@ -33,33 +33,47 @@ let sessionPresets : [SessionPreset] = [
 ///   - sessionPreset: The type of Session to use, example: `.classicPomodoro` or `.heroPomodoro`
 ///   - numberOfWorkSessions: The number of work sessions the user set, influencing how many breaks and work sessions the function will create.
 /// - Returns: A list of work Sessions and Breaks.
-func generateFocusSectionsFromPreset(sessionPreset: SessionPresetFunction, numberOfWorkSessions: Int) -> [FocusSection] {
+func generateFocusSectionsFromPreset(sessionPreset: SessionPresetFunction, numberOfWorkSessions: Int) -> (focusSections: [FocusSection], totalLength: Int) {
     var focusSections: [FocusSection] = []
+    var totalLength: Int = 0 // Total Length in Minutes
+    
+    guard numberOfWorkSessions > 0 else { return ([], 0)}
+    
     switch sessionPreset {
-        // MARK: Classic Pomodoro Logic
-    case .classicPomodoro:
+    case .classicPomodoro:  // MARK: Classic Pomodoro Logic
         // for loop, code complete pls do
         for index in 1...numberOfWorkSessions {
             focusSections.append(FocusSection(length: 25, isFocusSection: true))
+            totalLength += 25
             
             if index % 4 == 0 { // Every 4 work sessions, do a 30-Minute break instead of 5-Minute
                 focusSections.append(FocusSection(length: 30, isFocusSection: false))
+                totalLength += 30
             } else {
                 focusSections.append(FocusSection(length: 5, isFocusSection: false))
+                totalLength += 5
             }
         }
-        // MARK: Hero Pomodoro Logic
-    case .heroPomodoro:
+        
+    case .heroPomodoro: // MARK: Hero Pomodoro Logic
         for _ in 1...numberOfWorkSessions {
             focusSections.append(FocusSection(length: 50, isFocusSection: true))
             focusSections.append(FocusSection(length: 10, isFocusSection: false))
+            totalLength += 60
         }
-        // MARK: MBA Style Pomodoro Logic
-    case .MBAStylePomodoro:
+        
+    case .MBAStylePomodoro: // MARK: MBA Style Pomodoro Logic
         for _ in 1...numberOfWorkSessions {
             focusSections.append(FocusSection(length: 60, isFocusSection: true))
             focusSections.append(FocusSection(length: 15, isFocusSection: false))
+            totalLength += 75
         }
     }
-    return focusSections
+        
+    // If the last section is a break, then remove it as its unneeded
+    if focusSections.last?.isFocusSection == false {
+        totalLength -= focusSections.last!.length
+        focusSections.removeLast()
+    }
+    return (focusSections, totalLength)
 }

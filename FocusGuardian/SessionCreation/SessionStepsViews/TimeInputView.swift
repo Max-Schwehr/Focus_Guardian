@@ -41,7 +41,7 @@ struct TimeInputView: View {
             // MARK: - Time Input Boxes
             TimeInputBoxes(hours: $hours, minutes: $minutes, lives: $lives)
 
-            if !sections.isEmpty {
+            if sections.count > 0 {
                 // MARK: - Vertical Divider
                 RoundedRectangle(cornerRadius: 3)
                     .frame(width: 1.5, height: 18)
@@ -90,7 +90,7 @@ struct TimeInputView: View {
             Spacer()
             
             // MARK: - Section Add / Template Button Bar
-            TimeInputButtonBar()
+            TimeInputButtonBar(sections: $sections, hours: $hours, minutes: $minutes)
         }
     }
     // MARK: - Centering logic
