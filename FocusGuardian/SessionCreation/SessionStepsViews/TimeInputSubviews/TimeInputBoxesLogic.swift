@@ -66,6 +66,13 @@ extension TimeInputBoxes {
             break
         }
     }
+    
+    func setInputBoxes(hours: Int, minutes: Int) {
+        hourDigit1 = String(hours)
+        minuteDigit1 = String(Int(minutes / 10))
+        minuteDigit2 = String(Int(minutes % 10))
+        currentFocus = .hourDigit1
+    }
 
     /// Computes hour, minute, and derived lives from the three digit fields.
     /// Returns `nil` if any field is invalid or minutes are out of range (0...59).

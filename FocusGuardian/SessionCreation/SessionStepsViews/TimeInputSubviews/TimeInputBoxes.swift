@@ -76,6 +76,9 @@ struct TimeInputBoxes: View {
                 lives = 0
             }
         }
+        .onChange(of: [hours, minutes], { oldValue, newValue in
+            setInputBoxes(hours: hours, minutes: minutes)
+        })
         .onKeyPress { kp in
             switch kp.key {
             case .leftArrow:

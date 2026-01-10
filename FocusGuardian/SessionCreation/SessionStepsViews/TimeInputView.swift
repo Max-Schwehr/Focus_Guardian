@@ -40,8 +40,16 @@ struct TimeInputView: View {
             
             // MARK: - Time Input Boxes
             TimeInputBoxes(hours: $hours, minutes: $minutes, lives: $lives)
+                .onChange(of: (hours * 60 + minutes)) { old, new in
+                    // Handle the user finishing typing in the minutes and hours by adding or editing a section in the `sections` list
+                    if sections.isEmpty {
+                        sections.append(FocusSection(length: new, isFocusSection: true))
+                    } else {
+                        sections[selectedID].length = new
+                    }
+                }
 
-            if sections.count > 0 {
+            if sections.count > 1 {
                 // MARK: - Vertical Divider
                 RoundedRectangle(cornerRadius: 3)
                     .frame(width: 1.5, height: 18)
@@ -63,6 +71,9 @@ struct TimeInputView: View {
                                 ForEach(sections.indices, id: \.self) { index in
                                     let section = sections[index]
                                     TimeInputSectionCell(isFocusSection: section.isFocusSection, minutes: section.length)
+                                        .onTapGesture {
+                                            selectedID = index
+                                        }
                                         .id(index)
                                 }
                                 
@@ -77,6 +88,10 @@ struct TimeInputView: View {
                         // Portion that runs the logic to center a Section Cell
                         .onChange(of: selectedID) { _, newValue in
                             center(on: newValue, with: proxy)
+                            
+                            // When changing the `selectedID` adjust the `hours` and `minutes` so the change is reflected in the `TimeInputBoxes`
+                            hours = Int(sections[newValue].length / 60)
+                            minutes = Int(sections[newValue].length % 60)
                         }
                         .onAppear {
                             center(on: selectedID, with: proxy)
@@ -90,7 +105,7 @@ struct TimeInputView: View {
             Spacer()
             
             // MARK: - Section Add / Template Button Bar
-            TimeInputButtonBar(sections: $sections, hours: $hours, minutes: $minutes)
+            TimeInputButtonBar(sections: $sections, hours: $hours, minutes: $minutes, selectedID: $selectedID)
         }
     }
     // MARK: - Centering logic
