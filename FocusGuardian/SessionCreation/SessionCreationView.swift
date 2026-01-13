@@ -146,15 +146,15 @@ struct SessionCreationView: View {
             // Finalize and create a session based on inputs
             
             // MARK: This code is the real app code that has been commented out of testing
-//            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives, problemOccurred: false, sections: [FocusSection(length: hours * 60 + minutes, isFocusSection: true)])
-            //            modelContext.insert(session)
+            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives, problemOccurred: false, sections: sections)
+                        modelContext.insert(session)
 
             // MARK: Testing code
-            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: 3, problemOccurred: false, sections: [
-                FocusSection(length: 1, isFocusSection: true),
-                FocusSection(length: 1, isFocusSection: true)
-            ])
-            modelContext.insert(session)
+//            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: 3, problemOccurred: false, sections: [
+//                FocusSection(length: 1, isFocusSection: true),
+//                FocusSection(length: 1, isFocusSection: true)
+//            ])
+//            modelContext.insert(session)
             
             do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
         } else if let next = nextStep(from: step) {

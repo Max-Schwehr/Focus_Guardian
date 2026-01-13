@@ -32,72 +32,75 @@ struct TimeInputBoxes: View {
             DigitInputView(input: $hourDigit1)
                 .focused($currentFocus, equals: .hourDigit1)
                 .onChange(of: hourDigit1) { _, newValue in
-                    let sanitized = sanitizeToSingleDigit(newValue)
-                    let sanitizedString = String(sanitized)
-                    if sanitizedString != hourDigit1 { hourDigit1 = sanitizedString }
-                    advanceFocusIfTextboxFilled()
+//                    let sanitized = sanitizeToSingleDigit(newValue)
+//                    let sanitizedString = String(sanitized)
+//                    if sanitizedString != hourDigit1 { hourDigit1 = sanitizedString }
+//                    advanceFocusIfTextboxFilled()
                 }
                 .submitLabel(.next)
             
-            Text(":")
+            Text("Hr,   ")
                 .font(.largeTitle)
             
             DigitInputView(input: $minuteDigit1)
                 .focused($currentFocus, equals: .minuteDigit1)
                 .onChange(of: minuteDigit1) { _, newValue in
-                    let sanitized = sanitizeToSingleDigit(newValue)
-                    let sanitizedString = String(sanitized)
-                    if sanitizedString != minuteDigit1 { minuteDigit1 = sanitizedString }
-                    advanceFocusIfTextboxFilled()
+//                    let sanitized = sanitizeToSingleDigit(newValue)
+//                    let sanitizedString = String(sanitized)
+//                    if sanitizedString != minuteDigit1 { minuteDigit1 = sanitizedString }
+////                    advanceFocusIfTextboxFilled()
                 }
                 .submitLabel(.next)
             
             DigitInputView(input: $minuteDigit2)
                 .focused($currentFocus, equals: .minuteDigit2)
                 .onChange(of: minuteDigit2) { _, newValue in
-                    let sanitized = sanitizeToSingleDigit(newValue)
-                    let sanitizedString = String(sanitized)
-                    if sanitizedString != minuteDigit2 { minuteDigit2 = sanitizedString }
-                    advanceFocusIfTextboxFilled()
+//                    let sanitized = sanitizeToSingleDigit(newValue)
+//                    let sanitizedString = String(sanitized)
+//                    if sanitizedString != minuteDigit2 { minuteDigit2 = sanitizedString }
+////                    advanceFocusIfTextboxFilled()
                 }
                 .submitLabel(.done)
+            Text("Min")
+                .font(.largeTitle)
         }
         .onAppear { currentFocus = .hourDigit1 }
         .padding()
-        .background(.background)
-        .cornerRadius(20)
+        .glassEffect()
         .animation(.smooth, value: allFieldsFilled)
         .onChange(of: [hourDigit1, minuteDigit1, minuteDigit2]) { _, _ in
-            if allFieldsFilled {
-                updateBindingsFromInput()
-            } else {
-                hours = 0
-                minutes = 0
-                lives = 0
-            }
+//            if allFieldsFilled {
+////                updateBindingsFromInput()
+//            } else {
+//                hours = 0
+//                minutes = 0
+//                lives = 0
+//            }
         }
         .onChange(of: [hours, minutes], { oldValue, newValue in
-            setInputBoxes(hours: hours, minutes: minutes)
+//            setInputBoxes(hours: hours, minutes: minutes)
         })
-        .onKeyPress { kp in
-            switch kp.key {
-            case .leftArrow:
-                retreatFocus()
-                return .handled
-
-            case .rightArrow:
-                advanceFocus()
-                return .handled
-            default:
-                return .ignored
-            }
-        }
+//        .onKeyPress { kp in
+//            switch kp.key {
+//            case .leftArrow:
+//                retreatFocus()
+//                return .handled
+//
+//            case .rightArrow:
+//                advanceFocus()
+//                return .handled
+//            default:
+//                return .ignored
+//            }
+//        }
     .onDisappear {
-        updateBindingsFromInput()
+//        updateBindingsFromInput()
     }
     }
 }
 
 #Preview {
     TimeInputBoxes(hours: .constant(5), minutes: .constant(3), lives: .constant(3))
+        .padding()
+        .background(Color.gray.opacity(0.1))
 }

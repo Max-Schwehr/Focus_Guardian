@@ -8,15 +8,33 @@ import SwiftUI
 
 struct DigitInputView: View {
     @Binding var input: String
-
+    @FocusState private var isFocused: Bool
+    @State private var isBlinking: Bool = false
+    
+    private var shouldBlink: Bool { isFocused && !input.isEmpty }
+    
     var body: some View {
         TextField("", text: $input)
-            .disableAutocorrection(true)
+            .focused($isFocused)
+            .textFieldStyle(.plain)
+            .background(.clear)
+            .opacity(shouldBlink ? (isBlinking ? 0.15 : 1.0) : 1.0)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .frame(width: 45, height: 50)
+            .glassEffect()
             .fontDesign(.monospaced)
             .bold()
             .font(.largeTitle)
             .multilineTextAlignment(.center)
-            .frame(width: 45)
+            .onChange(of: shouldBlink) { active in
+                if active { isBlinking = true } else { isBlinking = false }
+            }
+            .onAppear {
+                // Initialize state in case it starts focused
+                isBlinking = shouldBlink
+            }
+            .animation(shouldBlink ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: shouldBlink)
+            .animation(shouldBlink ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: isBlinking)
     }
 }
 
@@ -33,4 +51,6 @@ func sanitizeToSingleDigit(_ text: String) -> Int {
 
 #Preview {
     DigitInputView(input: .constant("5"))
+        .padding()
 }
+

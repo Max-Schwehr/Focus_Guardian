@@ -33,7 +33,7 @@ struct TimeInputButtonBar: View {
                     .padding()
             }
             .buttonStyle(.plain)
-            .glassEffect()
+            .glassEffect(.clear)
             
             
             // MARK: - Add Break / Work Session
@@ -55,8 +55,7 @@ struct TimeInputButtonBar: View {
                     .padding()
             }
             .buttonStyle(.plain)
-            .glassEffect()
-            .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+            .glassEffect(.clear)
         }
         .padding(12)
         
@@ -137,5 +136,7 @@ private struct SubMenu: View {
 #Preview {
     TimeInputButtonBar(sections: .constant([]), hours: .constant(0), minutes: .constant(0), selectedID: .constant(0))
         .padding()
+
+        .background(Color.gray.opacity(0.2))
 }
 

@@ -110,7 +110,7 @@ extension FloatingWindowView {
     func runCountdownTimer() async {
         print("RunCountdownTimer: has reported that secondsRemaining is: \(secondsRemaining) and isCountingDown is \(isCountingDown)")
         while secondsRemaining > 0 || (!isCountingDown) {
-            try? await Task.sleep(for: .seconds(0.2)) // NOTE: THIS HAS BEEN CHANGED FOR FASTER TESTING
+            try? await Task.sleep(for: .seconds(1)) // NOTE: THIS HAS BEEN CHANGED FOR FASTER TESTING
             withAnimation {
                 if isCountingDown {
                     secondsRemaining -= 1

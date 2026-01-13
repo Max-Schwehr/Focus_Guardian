@@ -88,7 +88,6 @@ struct TimeInputView: View {
                         // Portion that runs the logic to center a Section Cell
                         .onChange(of: selectedID) { _, newValue in
                             center(on: newValue, with: proxy)
-                            
                             // When changing the `selectedID` adjust the `hours` and `minutes` so the change is reflected in the `TimeInputBoxes`
                             hours = Int(sections[newValue].length / 60)
                             minutes = Int(sections[newValue].length % 60)
@@ -96,7 +95,6 @@ struct TimeInputView: View {
                         .onAppear {
                             center(on: selectedID, with: proxy)
                         }
-                        
                     }
                 }
                 .frame(height: 50)
@@ -106,6 +104,7 @@ struct TimeInputView: View {
             
             // MARK: - Section Add / Template Button Bar
             TimeInputButtonBar(sections: $sections, hours: $hours, minutes: $minutes, selectedID: $selectedID)
+                .padding(.bottom, 1) // Stops clipping of the bottom of this view
         }
     }
     // MARK: - Centering logic
@@ -124,12 +123,16 @@ struct TimeInputView: View {
             FocusSection(length: 50, isFocusSection: true)
 
         ]))
+    .padding()
+
         .frame(width: 500, height: 550)
         .background(Color.gray.opacity(0.1))
 }
 
 #Preview("No Sections") {
     TimeInputView(lives: .constant(0), sections: .constant([]))
+        .padding()
+
         .frame(width: 500, height: 550)
         .background(Color.gray.opacity(0.1))
 }
