@@ -97,7 +97,8 @@ struct SessionCreationView: View {
 
                     }
                     Spacer()
-                    
+                    TimeInputButtonBar(sections: $sections, length: .constant(0), selectedID: .constant(0))
+                    Spacer()
                     // MARK: - Next / Complete Button
                     VStack {
                         // Text showing the keyboard shortcut to trigger the button
@@ -149,13 +150,6 @@ struct SessionCreationView: View {
             let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives ?? 0, problemOccurred: false, sections: sections)
                         modelContext.insert(session)
 
-            // MARK: Testing code
-//            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: 3, problemOccurred: false, sections: [
-//                FocusSection(length: 1, isFocusSection: true),
-//                FocusSection(length: 1, isFocusSection: true)
-//            ])
-//            modelContext.insert(session)
-            
             do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
         } else if let next = nextStep(from: step) {
             isAdvancing = true

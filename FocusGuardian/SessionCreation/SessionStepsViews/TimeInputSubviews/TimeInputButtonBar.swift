@@ -11,8 +11,7 @@ import SwiftUI
 // Toolbar for adding sessions or using presets.
 struct TimeInputButtonBar: View {
     @Binding var sections : [FocusSection]
-    @Binding var hours : Int
-    @Binding var minutes : Int
+    @Binding var length: Int?
     @Binding var selectedID : Int
     @State private var isAddingWorkSession : Bool = false
     var body: some View {
@@ -30,10 +29,15 @@ struct TimeInputButtonBar: View {
             } label: {
                 // MARK: Button Label
                 Image(systemName: "ellipsis.circle")
-                    .padding()
+                    .font(.headline)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(.plain)
-            .glassEffect(.clear)
+            .glassEffect(.regular)
+            .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+
             
             
             // MARK: - Add Break / Work Session
@@ -41,7 +45,7 @@ struct TimeInputButtonBar: View {
             Button {
                 // If the list of sections is empty, create a new section based on the current values of `hours` and `minutes`
                 if sections.isEmpty {
-                    sections.append(FocusSection(length: hours * 60 + minutes, isFocusSection: true))
+//                    sections.append(FocusSection(length: length, isFocusSection: true))
                 }
                 // Add the new break section
                 sections.append(FocusSection(length: 0, isFocusSection: isAddingWorkSession))
@@ -51,40 +55,44 @@ struct TimeInputButtonBar: View {
                 isAddingWorkSession.toggle()
             } label: {
                 Label("\(isAddingWorkSession ? "Add Work Session" : "Add Break")", systemImage: "zzz")
-                    .fontWeight(.medium)
-                    .padding()
+                    .labelStyle(.titleAndIcon)
+                    .font(.headline)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(.plain)
-            .glassEffect(.clear)
+            .glassEffect(.regular)
+            .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+
         }
-        .padding(12)
         
         // MARK: Outline around view
-        .overlay(
-            ZStack(alignment: .top) {
-                let gapSpace = 0.26
-                Text("Add Scheduled Breaks")
-                    .font(.system(size: 10))
-                    .frame(height: 10)
-                    .offset(y: -5)
-                
-                ZStack {
-                    // Left segment
-                    RoundedRectangle(cornerRadius: 30, style: .continuous)
-                        .trim(from: 0, to: 0.25 - (gapSpace / 2))
-                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
-                        .scaleEffect(x: 1, y: -1, anchor: .center)
-                    // Left segment
-                    RoundedRectangle(cornerRadius: 30, style: .continuous)
-                        .trim(from: 0.5, to: 0.75 - (gapSpace / 2))
-                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
-                    // Bottom Segment
-                    RoundedRectangle(cornerRadius: 30, style: .continuous)
-                        .trim(from: 0, to: 0.5)
-                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
-                }
-            }
-        )
+//        .overlay(
+//            ZStack(alignment: .top) {
+//                let gapSpace = 0.26
+//                Text("Add Scheduled Breaks")
+//                    .font(.system(size: 10))
+//                    .frame(height: 10)
+//                    .offset(y: -5)
+//                
+//                ZStack {
+//                    // Left segment
+//                    RoundedRectangle(cornerRadius: 30, style: .continuous)
+//                        .trim(from: 0, to: 0.25 - (gapSpace / 2))
+//                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
+//                        .scaleEffect(x: 1, y: -1, anchor: .center)
+//                    // Left segment
+//                    RoundedRectangle(cornerRadius: 30, style: .continuous)
+//                        .trim(from: 0.5, to: 0.75 - (gapSpace / 2))
+//                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
+//                    // Bottom Segment
+//                    RoundedRectangle(cornerRadius: 30, style: .continuous)
+//                        .trim(from: 0, to: 0.5)
+//                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
+//                }
+//            }
+//        )
     }
 }
 
@@ -134,7 +142,7 @@ private struct SubMenu: View {
 }
 
 #Preview {
-    TimeInputButtonBar(sections: .constant([]), hours: .constant(0), minutes: .constant(0), selectedID: .constant(0))
+    TimeInputButtonBar(sections: .constant([]), length: .constant(0), selectedID: .constant(0))
         .padding()
 
         .background(Color.gray.opacity(0.2))

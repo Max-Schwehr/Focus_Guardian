@@ -11,8 +11,7 @@ import SwiftUI
 
 struct TimeInputBoxes: View {
     // Bindings for output values
-    @Binding var hours: Int
-    @Binding var minutes: Int
+    @Binding var length: Int?
     @Binding var lives: Int?
     
     @State var hourDigit1: Int? = nil
@@ -23,20 +22,39 @@ struct TimeInputBoxes: View {
     
     var body: some View {
         VStack {
+            // MARK: - Title Section
+            Text("Enter Focus Length")
+                .bold()
+                .font(.title3)
+            
+            // Tells the user how to format their response
             Text("Hours : Minutes")
                 .foregroundStyle(.secondary)
+                .onAppear(perform: pullValues)
+                .onChange(of: length, pullValues)
+                .onDisappear(perform: pushValues)
+                
+            
+            // MARK: Digit Views
             HStack(spacing: 8) {
-                DigitInputView(placeholder: "0", input: $hourDigit1)
+                // Hour Digit
+                DigitInputView(placeholder: "0", maxValue: .constant(3), input: $hourDigit1, retreatFocus: retreatFocus, progressFocus: progressFocus)
                     .focused($currentFocus, equals: .hourDigit1)
                     .submitLabel(.next)
                 
                 Text(":")
                 
-                DigitInputView(placeholder: "3", input: $minuteDigit1)
+                // Minute Digit 1
+                DigitInputView(placeholder: "3", maxValue: .constant(6), input: $minuteDigit1, retreatFocus: retreatFocus, progressFocus: progressFocus)
                     .focused($currentFocus, equals: .minuteDigit1)
                     .submitLabel(.next)
                 
-                DigitInputView(placeholder: "0", input: $minuteDigit2)
+                // Minute Digit 2
+                DigitInputView(placeholder: "0", maxValue: Binding(
+                    // If `minuteDigit1` is 6, this value must be zero; as you can't have values like 69 minutes.
+                    get: { (minuteDigit1 ?? 0) == 6 ? 0 : 9 },
+                    set: { _ in }
+                ), input: $minuteDigit2, retreatFocus: retreatFocus, progressFocus: progressFocus)
                     .focused($currentFocus, equals: .minuteDigit2)
                     .submitLabel(.done)
             }
@@ -47,13 +65,14 @@ struct TimeInputBoxes: View {
             .padding()
             .glassEffect()
            
-        } .onKeyPress { kp in
+        }
+        // MARK: Manage arrow keys, and tab key
+        .onKeyPress { kp in
             switch kp.key {
             case .leftArrow:
                 retreatFocus()
                 return .handled
             case .rightArrow, .tab:
-                print("Testing")
                 progressFocus()
                 return .handled
             default:
@@ -83,10 +102,39 @@ struct TimeInputBoxes: View {
             currentFocus = nil
         }
     }
+
+    /// Takes `hourDigit1`, `minuteDigit1`, and `minuteDigit2` and updates the `length` variable so their content is available to parent views.
+    func pushValues() {
+        if hourDigit1 == nil || minuteDigit1 == nil || minuteDigit2 == nil {
+            length = nil
+            return
+        }
+        // These values should never be `nil` as `hasValidValues` was ran, but to be safe it defaults to 0
+        let minutes = (minuteDigit1 ?? 0) * 10 + (minuteDigit2 ?? 0)
+        length = (hourDigit1 ?? 0) * 60 + minutes
+        
+        print("Values Pushed, length = \(length)")
+    }
+    
+    /// Takes `length` and converts it to `hourDigit1`, `minuteDigit1`, and `minuteDigit2` so `length`'s content can be rendered on screen.
+    func pullValues() {
+        guard let lengthUnwrapped = length else {
+            hourDigit1 = nil
+            minuteDigit1 = nil
+            minuteDigit2 = nil
+            return
+        }
+        
+        hourDigit1 = lengthUnwrapped / 60
+    
+        let minutes = lengthUnwrapped % 60
+        minuteDigit1 = minutes / 10
+        minuteDigit2 = minutes % 10
+    }
 }
 
 #Preview {
-    TimeInputBoxes(hours: .constant(5), minutes: .constant(3), lives: .constant(3))
+    TimeInputBoxes(length: .constant(5), lives: .constant(3))
         .padding()
         .background(Color.gray.opacity(0.1))
 }

@@ -30,7 +30,7 @@ struct LivesInputView: View {
                     .foregroundStyle(.secondary)
             }
 
-            DigitInputView(placeholder: "", input: $lives)
+            DigitInputView(placeholder: "", maxValue: .constant(9), input: $lives, retreatFocus: {}, progressFocus: {})
                 .focused($isFocused)
                 .padding()
                 .background(.white)

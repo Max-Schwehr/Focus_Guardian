@@ -9,12 +9,15 @@ import AppKit
 
 struct DigitInputView: View {
     let placeholder : String
+    @Binding var maxValue : Int
     @Binding var input: Int?
     @FocusState private var isFocused: Bool
+    let retreatFocus: () -> Void
+    let progressFocus: () -> Void
     var body: some View {
         ZStack {
             // MARK: Text Feild
-            NumericTextField(input: $input)
+            NumericTextField(input: $input, retreatFocus: retreatFocus, progressFocus: progressFocus, placeholder: placeholder)
                 .focused($isFocused)
                 .textFieldStyle(.plain)
                 .background(.clear)
@@ -27,7 +30,7 @@ struct DigitInputView: View {
                 .multilineTextAlignment(.center)
                 .onChange(of: input) { oldValue, newValue in
                     guard let inputUnwrapped = newValue else { return }
-                    input = min(inputUnwrapped, 6)
+                    input = min(inputUnwrapped, maxValue)
                 }
             
             // MARK: Invisible Click Target
@@ -48,8 +51,11 @@ struct DigitInputView: View {
 struct NumericTextField : View {
     @Binding var input: Int?
     @State private var stringInput : String = ""
+    let retreatFocus: () -> Void
+    let progressFocus: () -> Void
+    let placeholder: String
     var body: some View {
-        TextField("", text: $stringInput)
+        TextField(placeholder, text: $stringInput)
             // MARK: Int? - > String
             .onChange(of: input) { oldValue, newValue in
                 if let inputUnwrapped = input {
@@ -62,6 +68,7 @@ struct NumericTextField : View {
             .onChange(of: stringInput) { oldValue, newValue in
                 if let stringInputAsInt = Int(stringInput) {
                     input = stringInputAsInt
+                    progressFocus()
                 } else {
                     stringInput = ""
                     input = nil
@@ -72,8 +79,9 @@ struct NumericTextField : View {
             // Checks to see if you press delete, in which there is extra functions to be ran.
             // Makes sure there can only be one character in the textfield at a time.
             .onKeyPress(action: { keyPress in
-                if keyPress.key == "\u{7F}" {
-                    print("Delete Pressed")
+                // RetreatFocus when the delete key is pressed, and the textbox's content is empty
+                if keyPress.key == "\u{7F}" && stringInput.isEmpty {
+                    retreatFocus()
                 }
                 stringInput = keyPress.characters
                 return .handled
@@ -82,6 +90,6 @@ struct NumericTextField : View {
 }
 
 #Preview {
-    DigitInputView(placeholder: "1", input: .constant(5))
+    DigitInputView(placeholder: "1", maxValue: .constant(9), input: .constant(5), retreatFocus: {}, progressFocus: {})
         .padding()
 }
