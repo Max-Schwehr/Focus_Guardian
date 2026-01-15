@@ -7,14 +7,13 @@
 import SwiftUI
 
 struct LivesInputView: View {
-    @Binding var lives: Int
-    @State private var livesAsString: String
+    @Binding var lives: Int?
     @FocusState private var isFocused: Bool
-
-    init(lives: Binding<Int>) {
-        self._lives = lives
-        self._livesAsString = State(initialValue: String(lives.wrappedValue))
-    }
+//
+//    init(lives: Binding<Int>) {
+//        self._lives = lives
+//        self._livesAsString = State(initialValue: String(lives.wrappedValue))
+//    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -31,21 +30,21 @@ struct LivesInputView: View {
                     .foregroundStyle(.secondary)
             }
 
-            DigitInputView(input: $livesAsString)
+            DigitInputView(placeholder: "", input: $lives)
                 .focused($isFocused)
                 .padding()
                 .background(.white)
                 .cornerRadius(20)
                 .padding(.top, 20)
                 .onAppear { isFocused = true }
-                .onChange(of: livesAsString) { oldValue, newValue in
-                    if let value = Int(livesAsString) {
-                        lives = value
-                    }
-                }
-                .onChange(of: lives) { oldValue, newValue in
-                    livesAsString = String(lives)
-                }
+//                .onChange(of: livesAsString) { oldValue, newValue in
+//                    if let value = Int(livesAsString) {
+//                        lives = value
+//                    }
+//                }
+//                .onChange(of: lives) { oldValue, newValue in
+//                    livesAsString = String(lives)
+//                }
         }
     }
 }

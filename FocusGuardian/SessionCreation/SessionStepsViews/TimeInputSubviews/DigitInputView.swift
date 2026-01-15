@@ -5,52 +5,83 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct DigitInputView: View {
-    @Binding var input: String
+    let placeholder : String
+    @Binding var input: Int?
     @FocusState private var isFocused: Bool
-    @State private var isBlinking: Bool = false
-    
-    private var shouldBlink: Bool { isFocused && !input.isEmpty }
-    
     var body: some View {
-        TextField("", text: $input)
-            .focused($isFocused)
-            .textFieldStyle(.plain)
-            .background(.clear)
-            .opacity(shouldBlink ? (isBlinking ? 0.15 : 1.0) : 1.0)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .frame(width: 45, height: 50)
-            .glassEffect()
-            .fontDesign(.monospaced)
-            .bold()
-            .font(.largeTitle)
-            .multilineTextAlignment(.center)
-            .onChange(of: shouldBlink) { active in
-                if active { isBlinking = true } else { isBlinking = false }
-            }
-            .onAppear {
-                // Initialize state in case it starts focused
-                isBlinking = shouldBlink
-            }
-            .animation(shouldBlink ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: shouldBlink)
-            .animation(shouldBlink ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: isBlinking)
+        ZStack {
+            // MARK: Text Feild
+            NumericTextField(input: $input)
+                .focused($isFocused)
+                .textFieldStyle(.plain)
+                .background(.clear)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .frame(width: 45, height: 50)
+                .glassEffect(.clear)
+                .fontDesign(.monospaced)
+                .bold()
+                .font(.largeTitle)
+                .multilineTextAlignment(.center)
+                .onChange(of: input) { oldValue, newValue in
+                    guard let inputUnwrapped = newValue else { return }
+                    input = min(inputUnwrapped, 6)
+                }
+            
+            // MARK: Invisible Click Target
+            // Intercepts the user when they try to click on the textbox, preventing the curser from going before the digit.
+            Color.clear
+                .frame(width: 45, height: 50)
+                .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .onTapGesture {
+                    // Adjust `isFocused` which will highlight the content of the textfield
+                    isFocused = true
+                }
+        }
     }
 }
 
-// This is a helper method that parent files can call to allow the output of this function to be "sanitized"
-func sanitizeToSingleDigit(_ text: String) -> Int {
-    // Keep only the first numeric character; if none, treat as 0
-    if let ch = text.first(where: { $0.isNumber }) {
-        return ch.wholeNumberValue ?? 0
-    } else {
-        return 0
+// MARK: A NumericTextField that does not accept non-numbers
+// Note: Apple has a implementation of this with their normal textfields on a numerical mode, however, it allows the user to type letters, but does not pass them into any variables. I dont want this behavior, thus my own implantation below...
+struct NumericTextField : View {
+    @Binding var input: Int?
+    @State private var stringInput : String = ""
+    var body: some View {
+        TextField("", text: $stringInput)
+            // MARK: Int? - > String
+            .onChange(of: input) { oldValue, newValue in
+                if let inputUnwrapped = input {
+                    stringInput = String(inputUnwrapped)
+                } else {
+                    stringInput = ""
+                }
+            }
+            // MARK: String -> Int?
+            .onChange(of: stringInput) { oldValue, newValue in
+                if let stringInputAsInt = Int(stringInput) {
+                    input = stringInputAsInt
+                } else {
+                    stringInput = ""
+                    input = nil
+                }
+            }
+        
+            // MARK: Key Register System
+            // Checks to see if you press delete, in which there is extra functions to be ran.
+            // Makes sure there can only be one character in the textfield at a time.
+            .onKeyPress(action: { keyPress in
+                if keyPress.key == "\u{7F}" {
+                    print("Delete Pressed")
+                }
+                stringInput = keyPress.characters
+                return .handled
+            })
     }
 }
-
 
 #Preview {
-    DigitInputView(input: .constant("5"))
+    DigitInputView(placeholder: "1", input: .constant(5))
         .padding()
 }
-

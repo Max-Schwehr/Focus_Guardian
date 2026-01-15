@@ -13,7 +13,7 @@ struct SessionCreationView: View {
     @State var step: SessionStep = .timeInput
     @State private var isAdvancing: Bool = true
     @State private var isContractValid: Bool? = nil
-    @State private var lives : Int = 0
+    @State private var lives : Int? = 0
     @State private var sections : [FocusSection] = []
 
     @Query var sessions: [FocusSession]
@@ -146,7 +146,7 @@ struct SessionCreationView: View {
             // Finalize and create a session based on inputs
             
             // MARK: This code is the real app code that has been commented out of testing
-            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives, problemOccurred: false, sections: sections)
+            let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives ?? 0, problemOccurred: false, sections: sections)
                         modelContext.insert(session)
 
             // MARK: Testing code

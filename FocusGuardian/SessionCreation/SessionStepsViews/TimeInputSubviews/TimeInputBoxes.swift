@@ -13,89 +13,75 @@ struct TimeInputBoxes: View {
     // Bindings for output values
     @Binding var hours: Int
     @Binding var minutes: Int
-    @Binding var lives: Int
+    @Binding var lives: Int?
     
-    // Single-digit hour (0–9)
-    @State var hourDigit1: String = ""
-    // Minute digits (00–59)
-    @State var minuteDigit1: String = ""
-    @State var minuteDigit2: String = ""
-    
-    var allFieldsFilled: Bool {
-        !hourDigit1.isEmpty && !minuteDigit1.isEmpty && !minuteDigit2.isEmpty
-    }
-    
+    @State var hourDigit1: Int? = nil
+    @State var minuteDigit1: Int? = nil
+    @State var minuteDigit2: Int? = nil
+        
     @FocusState var currentFocus: CurrentDigitFocus?
     
     var body: some View {
-        HStack(spacing: 8) {
-            DigitInputView(input: $hourDigit1)
-                .focused($currentFocus, equals: .hourDigit1)
-                .onChange(of: hourDigit1) { _, newValue in
-//                    let sanitized = sanitizeToSingleDigit(newValue)
-//                    let sanitizedString = String(sanitized)
-//                    if sanitizedString != hourDigit1 { hourDigit1 = sanitizedString }
-//                    advanceFocusIfTextboxFilled()
-                }
-                .submitLabel(.next)
-            
-            Text("Hr,   ")
-                .font(.largeTitle)
-            
-            DigitInputView(input: $minuteDigit1)
-                .focused($currentFocus, equals: .minuteDigit1)
-                .onChange(of: minuteDigit1) { _, newValue in
-//                    let sanitized = sanitizeToSingleDigit(newValue)
-//                    let sanitizedString = String(sanitized)
-//                    if sanitizedString != minuteDigit1 { minuteDigit1 = sanitizedString }
-////                    advanceFocusIfTextboxFilled()
-                }
-                .submitLabel(.next)
-            
-            DigitInputView(input: $minuteDigit2)
-                .focused($currentFocus, equals: .minuteDigit2)
-                .onChange(of: minuteDigit2) { _, newValue in
-//                    let sanitized = sanitizeToSingleDigit(newValue)
-//                    let sanitizedString = String(sanitized)
-//                    if sanitizedString != minuteDigit2 { minuteDigit2 = sanitizedString }
-////                    advanceFocusIfTextboxFilled()
-                }
-                .submitLabel(.done)
-            Text("Min")
-                .font(.largeTitle)
+        VStack {
+            Text("Hours : Minutes")
+                .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                DigitInputView(placeholder: "0", input: $hourDigit1)
+                    .focused($currentFocus, equals: .hourDigit1)
+                    .submitLabel(.next)
+                
+                Text(":")
+                
+                DigitInputView(placeholder: "3", input: $minuteDigit1)
+                    .focused($currentFocus, equals: .minuteDigit1)
+                    .submitLabel(.next)
+                
+                DigitInputView(placeholder: "0", input: $minuteDigit2)
+                    .focused($currentFocus, equals: .minuteDigit2)
+                    .submitLabel(.done)
+            }
+            .font(.largeTitle)
+            .bold()
+            .fontDesign(.monospaced)
+            .onAppear { currentFocus = .hourDigit1 }
+            .padding()
+            .glassEffect()
+           
+        } .onKeyPress { kp in
+            switch kp.key {
+            case .leftArrow:
+                retreatFocus()
+                return .handled
+            case .rightArrow, .tab:
+                print("Testing")
+                progressFocus()
+                return .handled
+            default:
+                return .ignored
+            }
         }
-        .onAppear { currentFocus = .hourDigit1 }
-        .padding()
-        .glassEffect()
-        .animation(.smooth, value: allFieldsFilled)
-        .onChange(of: [hourDigit1, minuteDigit1, minuteDigit2]) { _, _ in
-//            if allFieldsFilled {
-////                updateBindingsFromInput()
-//            } else {
-//                hours = 0
-//                minutes = 0
-//                lives = 0
-//            }
-        }
-        .onChange(of: [hours, minutes], { oldValue, newValue in
-//            setInputBoxes(hours: hours, minutes: minutes)
-        })
-//        .onKeyPress { kp in
-//            switch kp.key {
-//            case .leftArrow:
-//                retreatFocus()
-//                return .handled
-//
-//            case .rightArrow:
-//                advanceFocus()
-//                return .handled
-//            default:
-//                return .ignored
-//            }
-//        }
-    .onDisappear {
-//        updateBindingsFromInput()
     }
+    
+    /// Progress the current focus to the next textbox, if the focus is currently the last textbox, its sets the focus to nil
+    func progressFocus() {
+        if currentFocus == .hourDigit1 {
+            currentFocus = .minuteDigit1
+        } else if currentFocus == .minuteDigit1 {
+            currentFocus = .minuteDigit2
+        } else if currentFocus == .minuteDigit2 {
+            currentFocus = nil
+        }
+    }
+    
+    /// Retreat the current focus to the previous textbox; if the focus is currently the first textbox (or nil), set the focus to nil
+    func retreatFocus() {
+        if currentFocus == .minuteDigit2 {
+            currentFocus = .minuteDigit1
+        } else if currentFocus == .minuteDigit1 {
+            currentFocus = .hourDigit1
+        } else if currentFocus == .hourDigit1 {
+            currentFocus = nil
+        }
     }
 }
 
@@ -104,3 +90,4 @@ struct TimeInputBoxes: View {
         .padding()
         .background(Color.gray.opacity(0.1))
 }
+

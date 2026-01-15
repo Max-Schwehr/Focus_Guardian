@@ -10,11 +10,27 @@
 		50BB52482F049D2E000C7BCC /* FaviconFinder in Frameworks */ = {isa = PBXBuildFile; productRef = 50BB52472F049D2E000C7BCC /* FaviconFinder */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5005BAA32F16AE6F00C78955 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 506BADFB2EA3589000DC060F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 506BAE022EA3589000DC060F;
+			remoteInfo = FocusGuardian;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		5005BA9F2F16AE6F00C78955 /* FocusGuardianTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusGuardianTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		506BAE032EA3589000DC060F /* FocusGuardian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusGuardian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5005BAA02F16AE6F00C78955 /* FocusGuardianTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FocusGuardianTests;
+			sourceTree = "<group>";
+		};
 		506BAE052EA3589000DC060F /* FocusGuardian */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = FocusGuardian;
@@ -23,6 +39,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5005BA9C2F16AE6F00C78955 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		506BAE002EA3589000DC060F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				506BAE052EA3589000DC060F /* FocusGuardian */,
+				5005BAA02F16AE6F00C78955 /* FocusGuardianTests */,
 				506BAE042EA3589000DC060F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				506BAE032EA3589000DC060F /* FocusGuardian.app */,
+				5005BA9F2F16AE6F00C78955 /* FocusGuardianTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,6 +78,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5005BA9E2F16AE6F00C78955 /* FocusGuardianTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5005BAA52F16AE6F00C78955 /* Build configuration list for PBXNativeTarget "FocusGuardianTests" */;
+			buildPhases = (
+				5005BA9B2F16AE6F00C78955 /* Sources */,
+				5005BA9C2F16AE6F00C78955 /* Frameworks */,
+				5005BA9D2F16AE6F00C78955 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5005BAA42F16AE6F00C78955 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5005BAA02F16AE6F00C78955 /* FocusGuardianTests */,
+			);
+			name = FocusGuardianTests;
+			packageProductDependencies = (
+			);
+			productName = FocusGuardianTests;
+			productReference = 5005BA9F2F16AE6F00C78955 /* FocusGuardianTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		506BAE022EA3589000DC060F /* FocusGuardian */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 506BAE0E2EA3589100DC060F /* Build configuration list for PBXNativeTarget "FocusGuardian" */;
@@ -83,9 +131,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					5005BA9E2F16AE6F00C78955 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 506BAE022EA3589000DC060F;
+					};
 					506BAE022EA3589000DC060F = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -109,11 +161,19 @@
 			projectRoot = "";
 			targets = (
 				506BAE022EA3589000DC060F /* FocusGuardian */,
+				5005BA9E2F16AE6F00C78955 /* FocusGuardianTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5005BA9D2F16AE6F00C78955 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		506BAE012EA3589000DC060F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,6 +184,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5005BA9B2F16AE6F00C78955 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		506BADFF2EA3589000DC060F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -133,7 +200,59 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5005BAA42F16AE6F00C78955 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 506BAE022EA3589000DC060F /* FocusGuardian */;
+			targetProxy = 5005BAA32F16AE6F00C78955 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		5005BAA62F16AE6F00C78955 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 43C7MB8TP5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = desktop.FocusGuardianTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FocusGuardian.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FocusGuardian";
+			};
+			name = Debug;
+		};
+		5005BAA72F16AE6F00C78955 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 43C7MB8TP5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = desktop.FocusGuardianTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FocusGuardian.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FocusGuardian";
+			};
+			name = Release;
+		};
 		506BAE0C2EA3589100DC060F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -371,6 +490,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5005BAA52F16AE6F00C78955 /* Build configuration list for PBXNativeTarget "FocusGuardianTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5005BAA62F16AE6F00C78955 /* Debug */,
+				5005BAA72F16AE6F00C78955 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		506BADFE2EA3589000DC060F /* Build configuration list for PBXProject "FocusGuardian" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

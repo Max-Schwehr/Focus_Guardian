@@ -17,7 +17,7 @@ struct TimeInputView: View {
     // Bindings for output values
     @State private var hours: Int = 0
     @State private var minutes: Int = 0
-    @Binding var lives: Int
+    @Binding var lives: Int?
 
     @State private var selectedID : Int = 0 // This represent which view the scroll view should scroll to
     
