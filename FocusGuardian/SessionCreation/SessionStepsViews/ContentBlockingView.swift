@@ -27,19 +27,18 @@ struct ContentBlockingView: View {
 
             if showingWebsiteBlocker {
                 WebsiteBlockingView()
+                Spacer()
             } else {
                 AppBlockingView()
+                
             }
-            
-            Spacer()
-            
+                        
         }
     }
 }
 
 #Preview {
     ContentBlockingView()
-        .padding()
         .background(Color.gray.opacity(0.1))
 }
 

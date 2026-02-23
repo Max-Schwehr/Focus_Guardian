@@ -8,22 +8,28 @@ import SwiftUI
 import AppKit
 
 struct AppCell: View {
+    static let size = CGSize(width: 108, height: 128)
     @Binding var isSelected: Bool
     let icon: NSImage
     let title: String
+
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 10) {
             Image(nsImage: icon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 60, height: 60)
+
             Text(title)
                 .font(.body)
                 .bold()
                 .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.9)
+                .frame(maxWidth: .infinity, minHeight: 34, alignment: .top)
         }
-        .padding(8)
-        .frame(width: 80)
+        .padding(10)
+        .frame(width: Self.size.width, height: Self.size.height, alignment: .top)
         .background(
             RoundedRectangle(cornerRadius: 14)
                 .fill(isSelected ? Color.accentColor.opacity(0.15) : Color.clear)

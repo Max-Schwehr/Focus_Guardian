@@ -10,14 +10,15 @@ import AppKit
 import UniformTypeIdentifiers
 
 struct AppBlockingView: View {
+    // MARK: - State
+    
     @State private var apps: [AppInfo] = []
     @State private var showingPicker = false
     @State private var showingQuestionMarkDetailView = false
-    private let adaptiveColumn = [
-            GridItem(.adaptive(minimum: 80))
-        ]
     @State private var selectedApps : [String] = []
     @State private var searchText: String = ""
+    
+    // MARK: - Computed Properties
     
     private var filteredApps: [AppInfo] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -25,8 +26,12 @@ struct AppBlockingView: View {
         return apps.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
 
+    // MARK: - Body
+    
     var body: some View {
         VStack {
+            // MARK: - Title/Header
+
             Text("Select an App to Block")
                 .padding(.top, 10)
                 .bold()
@@ -36,6 +41,9 @@ struct AppBlockingView: View {
                 .onDisappear {
                     blockedApps = selectedApps
                 }
+            
+            // MARK: - Info/Help Section
+
             HStack(spacing: 4) {
                 Text("Apps must be in the Applications Folder")
                 Image(systemName: "questionmark.circle")
@@ -49,76 +57,108 @@ struct AppBlockingView: View {
                     }
             }  .foregroundStyle(.secondary)
             
-            HStack {
-                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+            // MARK: - Search Bar
+
+            HStack(spacing: 10) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary.opacity(0.9))
+
                 TextField("Search apps", text: $searchText)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
+                    .font(.title3.weight(.semibold))
             }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(.thinMaterial)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.55),
+                                Color.white.opacity(0.12)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 4)
             .padding(.horizontal)
+            
+            // MARK: - App List
 
             ScrollView {
-                LazyVGrid(columns: adaptiveColumn, spacing: 10) {
-                    ForEach (filteredApps) { app in
+                LazyVStack(spacing: 8) {
+                    ForEach(filteredApps) { app in
                         let idOrPath = app.bundleID ?? app.url.path
-                        AppCell(
-                            isSelected: Binding<Bool>(
-                                get: { selectedApps.contains(idOrPath) },
-                                set: { newValue in
-                                    if newValue {
-                                        if !selectedApps.contains(idOrPath) {
-                                            selectedApps.append(idOrPath)
-                                        }
-                                    } else {
-                                        selectedApps.removeAll { $0 == idOrPath }
-                                    }
+                        let isSelected = selectedApps.contains(idOrPath)
+
+                        HStack(spacing: 12) {
+                            Image(nsImage: NSWorkspace.shared.icon(forFile: app.url.path))
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 34, height: 34)
+
+                            Text(app.name)
+                                .font(.body.weight(.semibold))
+                                .lineLimit(1)
+
+                            Spacer(minLength: 8)
+
+                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                .font(.title3)
+                                .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+                        }
+
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .glassEffect(.regular.tint(isSelected ? .blue.opacity(0.05) : nil))
+                        .padding(.horizontal)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation {
+                                if isSelected {
+                                    selectedApps.removeAll { $0 == idOrPath }
+                                } else {
+                                    selectedApps.append(idOrPath)
                                 }
-                            ),
-                            icon: NSWorkspace.shared.icon(forFile: app.url.path),
-                            title: app.name
-                        )
-                        
+                            }
+                        }
                     }
                 }
+                .padding(.horizontal, 2)
+                .padding(.bottom, 4)
             }
+            .frame(maxHeight: .infinity)
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.06),
+                        .init(color: .black, location: 0.94),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
         }
-        
-//        VStack(alignment: .leading, spacing: 12) {
-//            Text("Apps in /Applications")
-//                .font(.headline)
-//                .padding(.top, 10)
-//
-//            Button("Load from /Applications") {
-//                loadApplications()
-//            }
-//
-//            if apps.isEmpty {
-//                Text("No apps loaded")
-//                    .foregroundColor(.secondary)
-//            } else {
-//                List(apps) { app in
-//                    HStack(spacing: 8) {
-//                        Image(nsImage: NSWorkspace.shared.icon(forFile: app.url.path))
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fit)
-//                            .frame(width: 20, height: 20)
-//                        VStack(alignment: .leading, spacing: 2) {
-//                            Text(app.name)
-//                            Text(app.bundleID ?? "(no bundle id)")
-//                                .foregroundColor(.secondary)
-//                                .font(.caption)
-//                        }
-//                    }
-//                }
-//                .frame(minHeight: 200)
-//            }
-//        }
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
+    // MARK: - Private Methods
+    
     private func loadApplications() {
         apps = AppDiscoveryService.discoverTopLevelApps()
     }
 }
+
+ // MARK: - Preview
 
 #Preview {
     AppBlockingView()

@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    private let minWindowWidth: CGFloat = 500
+    private let maxWindowWidth: CGFloat = 400
+    private let minWindowHeight: CGFloat = 450
+    private let maxWindowHeight: CGFloat = 600
+
     enum Route: Hashable {
         case home
         case sessions
@@ -45,6 +50,14 @@ struct ContentView: View {
             }
            
         }
+        .frame(
+            minWidth: minWindowWidth,
+            idealWidth: maxWindowWidth,
+            maxWidth: maxWindowWidth,
+            minHeight: minWindowHeight,
+            idealHeight: maxWindowHeight,
+            maxHeight: maxWindowHeight
+        )
     }
 }
 

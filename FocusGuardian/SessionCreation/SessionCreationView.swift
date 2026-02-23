@@ -25,7 +25,7 @@ struct SessionCreationView: View {
     #endif
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 8) {
             // Main step content
             ZStack {
                 switch step {
@@ -42,9 +42,10 @@ struct SessionCreationView: View {
                     ContractView(isRetypeValid: $isContractValid)
                         .transition(transitionForCurrentDirection())
                 }
+//                Rectangle()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .clipped()
+//            .clipped()
             .animation(.spring(response: 0.45, dampingFraction: 0.9), value: step)
             .animation(.spring(response: 0.45, dampingFraction: 0.9), value: isAdvancing)
             .onChange(of: sessions) { oldValue, newValue in
@@ -65,74 +66,75 @@ struct SessionCreationView: View {
             }
 
             // Navigation buttons
-            VStack {
-                HStack(alignment: .bottom, spacing: 12) {
-                    // MARK: - Back Button
-                    VStack {
-                        // Text showing the keyboard shortcut to trigger the button
-                        if previousStep(from: step) != nil {
-                            HStack (spacing: 0) {
-                                Image(systemName: "chevron.left.square.fill")
-                                Text(" + ")
-                                Image(systemName: "command")
-                            }
-                            .font(.caption2)
-                            .opacity(0.3)
-                        }
-                        
-                        // Back Button
-                        Button(action: goBack) {
-                            Label("Back", systemImage: "chevron.up")
-                                .labelStyle(.titleAndIcon)
-                                .font(.headline)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        }
-                        .buttonStyle(.plain)
-                        .glassEffect()
-                        .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
-                        .disabled(previousStep(from: step) == nil)
-                        .keyboardShortcut(.leftArrow, modifiers: [.command])
-
-                    }
-                    Spacer()
-                    TimeInputButtonBar(sections: $sections, length: .constant(0), selectedID: .constant(0))
-                    Spacer()
-                    // MARK: - Next / Complete Button
-                    VStack {
-                        // Text showing the keyboard shortcut to trigger the button
-                        HStack(spacing: 0) {
-                            Image(systemName: "command")
+            HStack(alignment: .bottom, spacing: 12) {
+                // MARK: - Back Button
+                VStack {
+                    // Text showing the keyboard shortcut to trigger the button
+                    if previousStep(from: step) != nil {
+                        HStack (spacing: 0) {
+                            Image(systemName: "chevron.left.square.fill")
                             Text(" + ")
-                            Image(systemName: "chevron.right.square.fill")
+                            Image(systemName: "command")
                         }
                         .font(.caption2)
                         .opacity(0.3)
-                        
-                        // Next Button
-                        Button(action: {
-                            goNext()
-                            do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
-                        }) {
-                            Label(step == .contractInput ? "Start Focus Timer" : "Next", systemImage: step == .livesInput ? "checkmark" : "chevron.down")
-                                .labelStyle(.titleAndIcon)
-                                .font(.headline)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.white)
-                        .glassEffect(.regular.tint(.blue))
-                        .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
-                        .keyboardShortcut(.rightArrow, modifiers: [.command])
-                        .disabled(step == .contractInput && isContractValid != true)
                     }
+                    
+                    // Back Button
+                    Button(action: goBack) {
+                        Label("Back", systemImage: "chevron.up")
+                            .labelStyle(.titleAndIcon)
+                            .font(.headline)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .glassEffect()
+                    .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+                    .disabled(previousStep(from: step) == nil)
+                    .keyboardShortcut(.leftArrow, modifiers: [.command])
+                    
+                }
+                Spacer()
+                TimeInputButtonBar(sections: $sections, length: .constant(0), selectedID: .constant(0))
+                Spacer()
+                // MARK: - Next / Complete Button
+                VStack {
+                    // Text showing the keyboard shortcut to trigger the button
+                    HStack(spacing: 0) {
+                        Image(systemName: "command")
+                        Text(" + ")
+                        Image(systemName: "chevron.right.square.fill")
+                    }
+                    .font(.caption2)
+                    .opacity(0.3)
+                    
+                    // Next Button
+                    Button(action: {
+                        goNext()
+                        do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
+                    }) {
+                        Label(step == .contractInput ? "Start Focus Timer" : "Next", systemImage: step == .livesInput ? "checkmark" : "chevron.down")
+                            .labelStyle(.titleAndIcon)
+                            .font(.headline)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.white)
+                    .glassEffect(.regular.tint(.blue))
+                    .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+                    .keyboardShortcut(.rightArrow, modifiers: [.command])
+                    .disabled(step == .contractInput && isContractValid != true)
                 }
             }
+            
+            .padding(.horizontal, 16)
+            .padding(.top, 4)
+            .padding(.bottom, 16)
         }
-        .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .background(.ultraThinMaterial)
         .ignoresSafeArea()
