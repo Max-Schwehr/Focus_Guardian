@@ -62,6 +62,9 @@ struct TimeInputBoxes: View {
             .bold()
             .fontDesign(.monospaced)
             .onAppear { currentFocus = .hourDigit1 }
+            .onChange(of: hourDigit1) { _, _ in pushValues() }
+            .onChange(of: minuteDigit1) { _, _ in pushValues() }
+            .onChange(of: minuteDigit2) { _, _ in pushValues() }
             .padding()
             .glassEffect()
            
@@ -138,4 +141,3 @@ struct TimeInputBoxes: View {
         .padding()
         .background(Color.gray.opacity(0.1))
 }
-

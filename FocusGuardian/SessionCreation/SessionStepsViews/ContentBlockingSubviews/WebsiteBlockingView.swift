@@ -10,7 +10,7 @@ import SwiftUI
 internal import System
 
 struct WebsiteBlockingView: View {
-    @State private var blockedWebsitesLocal: [String] = []
+    @Binding var blockedWebsites: [String]
     @State private var textField: String = ""
 
     @State private var animatingID: String? = nil
@@ -18,11 +18,16 @@ struct WebsiteBlockingView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("Enter a website to block")
-                .padding(.top, 10)
-                .bold()
-                .onDisappear { blockedWebsites = blockedWebsitesLocal }
+            VStack(spacing: 6) {
+                Text("Type a website to block")
+                    .bold()
+                    .font(.title3)
+                    
 
+                Text("Websites blocked on: Safari, Chrome, Arc.\nClick return key to add website.")
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+            }
             GlassEffectContainer {
                 ZStack(alignment: .top) {
                     // SOURCE (the one that "flies from" the TextField area)
@@ -34,14 +39,12 @@ struct WebsiteBlockingView: View {
                     }
 
                     VStack(spacing: 12) {
-                        TextField("example.com", text: $textField)
-                            .onSubmit { addWebsite() }
-                            .font(.title2)
-                            .bold()
-                            .fontDesign(.monospaced)
-                            .padding(10)
-                            .glassEffect(in: .rect(cornerRadius: 16))
-                            .frame(width: 300)
+                        StandardTextInputView(
+                            text: $textField,
+                            placeholder: "example.com",
+                            onSubmit: addWebsite
+                        )
+                        .frame(width: 350)
 
                         grid
                     }
@@ -52,12 +55,12 @@ struct WebsiteBlockingView: View {
 
     private var grid: some View {
         LazyVStack(alignment: .center, spacing: 12) {
-            ForEach(Array(stride(from: 0, to: blockedWebsitesLocal.count, by: 2)), id: \.self) { index in
+            ForEach(Array(stride(from: 0, to: blockedWebsites.count, by: 2)), id: \.self) { index in
                 HStack(alignment: .top, spacing: 15) {
-                    cell(for: blockedWebsitesLocal[index])
+                    cell(for: blockedWebsites[index])
 
-                    if index + 1 < blockedWebsitesLocal.count {
-                        cell(for: blockedWebsitesLocal[index + 1])
+                    if index + 1 < blockedWebsites.count {
+                        cell(for: blockedWebsites[index + 1])
                     }
                 }
             }
@@ -84,7 +87,7 @@ struct WebsiteBlockingView: View {
         // Phase 2: next tick, insert the DESTINATION with animation
         DispatchQueue.main.async {
             withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
-                blockedWebsitesLocal.append(newID)
+                blockedWebsites.append(newID)
             }
 
             // Phase 3: remove the SOURCE after the spring settles
@@ -96,6 +99,6 @@ struct WebsiteBlockingView: View {
 }
 
 #Preview {
-    SessionCreationView(step: .contentBlockingInput)
+    WebsiteBlockingView(blockedWebsites: .constant(["example.com", "youtube.com"]))
         .frame(width: 517, height: 573)
 }

@@ -12,7 +12,7 @@ struct FocusGuardian_App: App {
         WindowGroup {
             ContentView()
         }
-        .defaultSize(width: 300, height: 400)
+        .defaultSize(width: 560, height: 520)
         .windowResizability(.contentSize)
         .modelContainer(for: [FocusSession.self])
     }

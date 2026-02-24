@@ -15,6 +15,9 @@ struct SessionCreationView: View {
     @State private var isContractValid: Bool? = nil
     @State private var lives : Int? = 0
     @State private var sections : [FocusSection] = []
+    @State private var focusLength: Int? = nil
+    @State private var blockedWebsitesSelection: [String] = []
+    @State private var blockedAppsSelection: [String] = []
 
     @Query var sessions: [FocusSession]
     @Environment(\.modelContext) var modelContext
@@ -30,10 +33,13 @@ struct SessionCreationView: View {
             ZStack {
                 switch step {
                 case .timeInput:
-                    TimeInputView(lives: $lives, sections: $sections)
+                    TimeInputView(length: $focusLength, lives: $lives, sections: $sections)
                         .transition(transitionForCurrentDirection())
                 case .contentBlockingInput:
-                    ContentBlockingView()
+                    ContentBlockingView(
+                        blockedWebsites: $blockedWebsitesSelection,
+                        blockedApps: $blockedAppsSelection
+                    )
                         .transition(transitionForCurrentDirection())
                 case .livesInput:
                     LivesInputView(lives: $lives)
@@ -45,7 +51,6 @@ struct SessionCreationView: View {
 //                Rectangle()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            .clipped()
             .animation(.spring(response: 0.45, dampingFraction: 0.9), value: step)
             .animation(.spring(response: 0.45, dampingFraction: 0.9), value: isAdvancing)
             .onChange(of: sessions) { oldValue, newValue in
@@ -97,8 +102,11 @@ struct SessionCreationView: View {
                     
                 }
                 Spacer()
-                TimeInputButtonBar(sections: $sections, length: .constant(0), selectedID: .constant(0))
+                if step == .timeInput {
+                    TimeInputButtonBar(sections: $sections, length: .constant(0), selectedID: .constant(0))
+                }
                 Spacer()
+                
                 // MARK: - Next / Complete Button
                 VStack {
                     // Text showing the keyboard shortcut to trigger the button
@@ -115,7 +123,7 @@ struct SessionCreationView: View {
                         goNext()
                         do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }
                     }) {
-                        Label(step == .contractInput ? "Start Focus Timer" : "Next", systemImage: step == .livesInput ? "checkmark" : "chevron.down")
+                        Label(step == .contractInput ? "Start" : "Next", systemImage: step == .contractInput ? "checkmark" : "chevron.down")
                             .labelStyle(.titleAndIcon)
                             .font(.headline)
                             .padding(.horizontal, 16)
@@ -149,7 +157,12 @@ struct SessionCreationView: View {
             // Finalize and create a session based on inputs
             
             // MARK: This code is the real app code that has been commented out of testing
+            blockedWebsites = blockedWebsitesSelection
+            blockedApps = blockedAppsSelection
+
             let session = FocusSession(completedLength: 0, date: Date(), totalHeartsCount: lives ?? 0, problemOccurred: false, sections: sections)
+            
+            print("SESSION IS: Sections: \(session.sections), TotalHeartCounts: \(session.totalHeartsCount)")
                         modelContext.insert(session)
 
             do { try modelContext.save() } catch { print("Failed to save after insert: \(error)") }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentBlockingView: View {
+    @Binding var blockedWebsites: [String]
+    @Binding var blockedApps: [String]
     @State private var showingWebsiteBlocker = true
     var body: some View {
         VStack(spacing: 10) {
@@ -26,10 +28,10 @@ struct ContentBlockingView: View {
             Spacer()
 
             if showingWebsiteBlocker {
-                WebsiteBlockingView()
+                WebsiteBlockingView(blockedWebsites: $blockedWebsites)
                 Spacer()
             } else {
-                AppBlockingView()
+                AppBlockingView(selectedApps: $blockedApps)
                 
             }
                         
@@ -38,7 +40,6 @@ struct ContentBlockingView: View {
 }
 
 #Preview {
-    ContentBlockingView()
+    ContentBlockingView(blockedWebsites: .constant([]), blockedApps: .constant([]))
         .background(Color.gray.opacity(0.1))
 }
-

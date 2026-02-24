@@ -56,6 +56,9 @@ struct NumericTextField : View {
     let placeholder: String
     var body: some View {
         TextField(placeholder, text: $stringInput)
+            .onAppear {
+                stringInput = input.map(String.init) ?? ""
+            }
             // MARK: Int? - > String
             .onChange(of: input) { oldValue, newValue in
                 if let inputUnwrapped = input {

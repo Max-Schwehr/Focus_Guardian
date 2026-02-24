@@ -15,7 +15,7 @@ enum CurrentDigitFocus: Hashable {
 
 struct TimeInputView: View {
     // Bindings for output values
-    @State private var length : Int?
+    @Binding var length : Int?
     @Binding var lives: Int?
     @State private var selectedID : Int = 0 // This represent which view the scroll view should scroll to
     @Binding var sections : [FocusSection]
@@ -28,11 +28,16 @@ struct TimeInputView: View {
             TimeInputBoxes(length: $length, lives: $lives)
                 .onChange(of: length) { old, new in
                     // Handle the user finishing typing in the minutes and hours by adding or editing a section in the `sections` list
+                    guard let new else { return }
+                    print("USER DONE TYPING")
                     if sections.isEmpty {
-                        sections.append(FocusSection(length: new ?? 0, isFocusSection: true))
+                        sections.append(FocusSection(length: new, isFocusSection: true))
                     } else {
-                        sections[selectedID].length = new ?? 0
+                        sections[selectedID].length = new
                     }
+                }
+                .onAppear {
+                    syncLengthFromSelectedSection()
                 }
             
             if sections.count > 1 {
@@ -59,6 +64,7 @@ struct TimeInputView: View {
                                     TimeInputSectionCell(isFocusSection: section.isFocusSection, minutes: section.length)
                                         .onTapGesture {
                                             selectedID = index
+                                            syncLengthFromSelectedSection()
                                         }
                                         .id(index)
                                 }
@@ -81,11 +87,6 @@ struct TimeInputView: View {
             }
             
             Spacer()
-            
-            // MARK: - Section Add / Template Button Bar
-//            TimeInputButtonBar(sections: $sections, length: $length, selectedID: $selectedID)
-//                .offset(y: (55/2))
-//                .padding(.bottom, 1) // Stops clipping of the bottom of this view
         }
     }
     // MARK: - Centering logic
@@ -95,10 +96,15 @@ struct TimeInputView: View {
             proxy.scrollTo(id, anchor: .center)
         }
     }
+
+    private func syncLengthFromSelectedSection() {
+        guard sections.indices.contains(selectedID) else { return }
+        length = sections[selectedID].length
+    }
 }
 
 #Preview("With Sections") {
-    TimeInputView(lives: .constant(0), sections: .constant([
+    TimeInputView(length: .constant(50), lives: .constant(0), sections: .constant([
         FocusSection(length: 50, isFocusSection: true),
         FocusSection(length: 10, isFocusSection: false),
         FocusSection(length: 50, isFocusSection: true)
@@ -111,10 +117,9 @@ struct TimeInputView: View {
 }
 
 #Preview("No Sections") {
-    TimeInputView(lives: .constant(0), sections: .constant([]))
+    TimeInputView(length: .constant(nil), lives: .constant(0), sections: .constant([]))
         .padding()
     
         .frame(width: 500, height: 550)
         .background(Color.gray.opacity(0.1))
 }
-

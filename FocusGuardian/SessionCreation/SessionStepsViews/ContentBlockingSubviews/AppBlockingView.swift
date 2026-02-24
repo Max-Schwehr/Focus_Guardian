@@ -15,7 +15,7 @@ struct AppBlockingView: View {
     @State private var apps: [AppInfo] = []
     @State private var showingPicker = false
     @State private var showingQuestionMarkDetailView = false
-    @State private var selectedApps : [String] = []
+    @Binding var selectedApps : [String]
     @State private var searchText: String = ""
     
     // MARK: - Computed Properties
@@ -38,9 +38,7 @@ struct AppBlockingView: View {
                 .onAppear {
                     loadApplications()
                 }
-                .onDisappear {
-                    blockedApps = selectedApps
-                }
+                
             
             // MARK: - Info/Help Section
 
@@ -161,6 +159,6 @@ struct AppBlockingView: View {
  // MARK: - Preview
 
 #Preview {
-    AppBlockingView()
+    AppBlockingView(selectedApps: .constant([]))
         .frame(width: 500, height: 550)
 }

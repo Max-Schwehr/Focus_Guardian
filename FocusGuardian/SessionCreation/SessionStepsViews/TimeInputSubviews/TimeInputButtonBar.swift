@@ -66,33 +66,6 @@ struct TimeInputButtonBar: View {
             .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
 
         }
-        
-        // MARK: Outline around view
-//        .overlay(
-//            ZStack(alignment: .top) {
-//                let gapSpace = 0.26
-//                Text("Add Scheduled Breaks")
-//                    .font(.system(size: 10))
-//                    .frame(height: 10)
-//                    .offset(y: -5)
-//                
-//                ZStack {
-//                    // Left segment
-//                    RoundedRectangle(cornerRadius: 30, style: .continuous)
-//                        .trim(from: 0, to: 0.25 - (gapSpace / 2))
-//                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
-//                        .scaleEffect(x: 1, y: -1, anchor: .center)
-//                    // Left segment
-//                    RoundedRectangle(cornerRadius: 30, style: .continuous)
-//                        .trim(from: 0.5, to: 0.75 - (gapSpace / 2))
-//                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
-//                    // Bottom Segment
-//                    RoundedRectangle(cornerRadius: 30, style: .continuous)
-//                        .trim(from: 0, to: 0.5)
-//                        .stroke(Color.primary.opacity(0.25), lineWidth: 1)
-//                }
-//            }
-//        )
     }
 }
 

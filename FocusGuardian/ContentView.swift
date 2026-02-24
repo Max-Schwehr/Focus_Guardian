@@ -9,8 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     private let minWindowWidth: CGFloat = 500
-    private let maxWindowWidth: CGFloat = 400
+    private let idealWindowWidth: CGFloat = 560
+    private let maxWindowWidth: CGFloat = 620
     private let minWindowHeight: CGFloat = 450
+    private let idealWindowHeight: CGFloat = 520
     private let maxWindowHeight: CGFloat = 600
 
     enum Route: Hashable {
@@ -52,10 +54,10 @@ struct ContentView: View {
         }
         .frame(
             minWidth: minWindowWidth,
-            idealWidth: maxWindowWidth,
+            idealWidth: idealWindowWidth,
             maxWidth: maxWindowWidth,
             minHeight: minWindowHeight,
-            idealHeight: maxWindowHeight,
+            idealHeight: idealWindowHeight,
             maxHeight: maxWindowHeight
         )
     }

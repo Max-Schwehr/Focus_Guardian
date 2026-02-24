@@ -36,6 +36,7 @@ struct GlassSegmentedPicker: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle().inset(by: -10))
                 // Report bounds for background positioning
                 .anchorPreference(key: SegmentBoundsPreference.self, value: .bounds) { ["web": $0] }
                 
@@ -54,6 +55,7 @@ struct GlassSegmentedPicker: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle().inset(by: -10))
                 // Report bounds for background positioning
                 .anchorPreference(key: SegmentBoundsPreference.self, value: .bounds) { ["apps": $0] }
             }
@@ -93,4 +95,3 @@ private struct SegmentBoundsPreference: PreferenceKey {
         .padding()
         
 }
-
